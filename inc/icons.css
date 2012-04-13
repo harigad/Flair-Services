@@ -1,0 +1,176 @@
+/* 
+    Document   : icons
+    Created on : Aug 20, 2011, 2:37:29 PM
+    Author     : Haritha
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+/* 
+   TODO customize this sample style
+   Syntax recommendation http://www.w3.org/TR/REC-CSS2/
+*/
+
+#flairs_holder{
+ background-color:#fff;
+ margin-left:8px;
+ margin-right:8px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	margin-top:1px;
+}
+
+.loading {
+	background-image:url('/images/ajax-loader.gif');
+}
+
+
+
+.search_result{
+background-color:#777;min-height:60px;color:#999;text-align:left;font-size:60px;padding:10px;
+border-bottom:1px solid #aaa;
+margin-left:8px;
+margin-right:8px;color:#fff;
+padding-left:60px;
+text-wrap:none;
+}
+
+
+.flair_thumb {
+	opacity:1;
+	position:relative;
+	width:80px;
+	height:80px;
+	padding:10px;
+	text-align:center;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	overflow:hidden;
+	display:inline-block;
+	vertical-align:middle;
+	cursor: pointer;
+	color:#999;
+	font-size:14px;
+	line-height:80px;
+	margin:1px 1px 1px 1px;
+	background-color:#ccc;
+	
+	background-position:center center;
+	background-repeat:no-repeat;
+}
+
+.flair_thumb_long {
+  
+	position:relative;
+	padding:10px;
+	text-align:center;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	overflow:hidden;
+	display:inline-block;
+	vertical-align:middle;
+	cursor: pointer;
+	color:#999;
+	font-size:14px;
+	line-height:80px;
+	margin:1px 1px 1px 1px;
+	background-color:#ccc;
+	
+	background-position:center center;
+	background-repeat:no-repeat;
+}
+
+.left_thumb{
+	margin-right:0px;         
+	background-color:#fff;
+	border-top-right-radius: 0px;
+	border-bottom-right-radius: 0px;
+	background-position:center 10px;
+	width:32px;padding-top:30px;height:60px;
+    color:#333;
+
+}
+
+.right_thumb{
+  margin-left:0px;
+  display:inline-block;
+  width:220px;
+  border-top-left-radius: 0px;
+	border-bottom-left-radius: 0px;
+
+	
+}
+
+
+.cancel_thumb {
+	background:url(/images/icons/cancel_thumb.png) 50% 50% no-repeat;
+}
+
+._color {
+	color:#336699;
+	background:#336699 ;
+}
+
+
+.boy_thumb {
+	background:url(/images/icons/boy_thumb.png) 50% 50% no-repeat;
+}
+.boy_color {
+	color:#336699;
+	background:#336699 ;
+}
+
+.girl_thumb {
+	background:url(/images/icons/girl_thumb.png) 50% 50% no-repeat;
+}
+.girl_color {
+	color:#ff178a;
+	background:#ff178a ;
+}
+
+.coffee {
+	background:url(/images/icons/coffee.png) 50% 50% no-repeat;
+}
+
+.coffee_color {
+	color:#705737;
+	background:#705737 ;
+}
+
+.alchohol {
+	background:url(/images/icons/alchohol.png) 50% 50% no-repeat;
+}
+
+.burger {
+	background:url(/images/icons/burger.png) 50% 50% no-repeat;
+}
+
+.dessert {
+	background:url(/images/icons/dessert.png) 50% 50% no-repeat;
+}
+
+.dessert_color {
+	color:#441a06;
+	background:#441a06 ;
+}
+.white  {
+	background:#fff ;
+}
+
+.appetizer {
+	background:url(/images/icons/appetizer.png) 50% 50% no-repeat;
+}
+
+.appetizer_color {
+	color:#441a06;
+	background:#441a06 ;
+}
+
+.wine  {
+	background:url(/images/icons/wine.png) 50% 50% no-repeat;
+}
+
+.wine_color  {
+	color:#441a06;
+	background:#441a06 ;
+}
