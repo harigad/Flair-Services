@@ -18,11 +18,11 @@ $flair.scroll = {
 
 	
 
-		this.canvas.addEventListener('touchstart', this.touchstart, false);
+	//	this.canvas.addEventListener('touchstart', this.touchstart, false);
 
-		this.canvas.addEventListener('touchmove', this.touchmove, false);
+	//	this.canvas.addEventListener('touchmove', this.touchmove, false);
 
-		this.canvas.addEventListener('touchend', this.touchend, false);			
+	//	this.canvas.addEventListener('touchend', this.touchend, false);			
 
 		
 
