@@ -9,6 +9,8 @@ $db = new db();
 $browser = new browser();
 $user = new user();
 
+//Checking if users id is set or not
+
 if (isset($user->id) != true) {
     header("Location: {$user->login()}");
 }
@@ -22,6 +24,7 @@ if (isset($user->id) != true) {
         <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; minimum-scale=1.0; user-scalable=0;" />
         <link type="text/css" href="inc/mobile.css" rel="stylesheet" />    
 		<link type="text/css" href="inc/icons.css" rel="stylesheet" />    		
+		
 		
 			<?php
 				if($browser->isMobile()!=true){
