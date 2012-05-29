@@ -1,21 +1,35 @@
 <?php 	
-		if($_POST['id']=="me"){
+		if($_POST['id']=="me" || $_POST['id']==$user->id){
 			$myProfile=true;
-			$userid=$user->id;		
+			$userid=$user->id;
 		}else{
 			$userid=$_POST['id'];		
 		}
 	
-		$thisUser = $db->selectRow("select * from user where id='{$userid}'");
-	
+		$thisUser = $db->selectRow("select * from user where id='{$userid}'");	
 		
 					$flairs = buildStickers(-1,$userid);
-						
+						$userJSON['id'] = $userid;
+						$userJSON['name'] = $thisUser['name'];
 						
 					if($myProfile){
-						$userJSON['id'] = "me";
+					
+						  $role=$db->selectRow("Select * from role where uid={$user->id} limit 1");
+						  if($role){
+							$userJSON['pid']=$role['pid'];
+							$userJSON['role']=$role['role'];						
+						  }else{
+						    $act=$db->selectRow("select place.pid, place.name from place inner join activation on place.pid=activation.pid where activation.uid={$user->id} and expired=0");						   
+						   if($act){
+						     $userJSON['activation_pid']=$act['pid'];
+							 $userJSON['activation_name']=$act['name'];
+						   }
+						
+						}
+						
+						
 					}else{
-						$userJSON['id'] = $userid;
+						
 					}
 					
 					$userJSON['photo_big'] = $thisUser['photo_big'];

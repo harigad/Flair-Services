@@ -1,12 +1,13 @@
 <?php
-function buildPlace($pid,$name,$lat,$lng,$phone=null){
+function buildPlace($pid,$name,$lat,$lng,$phone=null,$city=null){
 	global $db,$user;
 			
 			$place['id'] = $pid;
 			$place['name'] = $name;
+			$place['city'] = $city;
 			$place['lat'] = $lat;
 			$place['lng'] = $lng;
-			$place['phone'] = $phone;
+			$place['phone'] = $phone;			
 			$place['session'] = $_SESSION['lat'] . $_SESSION['lng'];			
 			$place['post'] = $_POST['lat'] . $_POST['lng'];
 
@@ -22,44 +23,45 @@ function buildPlace($pid,$name,$lat,$lng,$phone=null){
 				while($food = mysql_fetch_array($foodsData)) {							
 					array_push($foods,$food);
 				}	
-
 				
 				$place['foods'] = $foods;					
+
+				$castData = $db->selectRows("select distinct user.id as uid,user.name as name,user.photo as photo,user.photo_big as photo_big, user.role as role from user where user.pid={$pid}");
 				
-
-				$recipientsData = $db->selectRows("select distinct user.id as uid,user.name as name,user.photo as photo from user inner join sticker on user.id = sticker.recipient and  sticker.noun={$pid}");
-				$recipeients = array();			
-				while($recipient = mysql_fetch_array($recipientsData)) {							
-					array_push($recipeients,$recipeient);
+				$cast = array();	
+				
+				while($castMember = mysql_fetch_array($castData)) {							
+					array_push($cast,$castMember);
 				}
 
-				$recipeientsData = $db->selectRows("select distinct '-1'  as uid,recipientname as name, '' as photo from sticker_temp where noun={$pid} and recipient=-1 and status is NULL");
-				while($recipeient = mysql_fetch_array($recipeientsData)) {						
-					array_push($recipeients,$recipeient);
+				$castData = $db->selectRows("select distinct '-1'  as uid,recipientname as name, '' as photo,'' as photo_big,'' as role from sticker_temp where noun={$pid} and recipient=-1 and status is NULL");
+				while($castMember = mysql_fetch_array($castData)) {						
+					array_push($cast,$castMember);
 				}
 
-			  $place['recipeients'] = $recipeients;				
+			  $place['cast'] = $cast;				
 				
 			  return $place;
 				
 			}
 			
 			
-			function buildStickers($pid,$userid=0,$friends="") {
+			function buildStickers($pid,$userid=0,$friends="",$local=false) {
 				global $db,$user;
 				$stickers = array();	
 				
 				if($pid==-1){
-				  $whereClause = " user={$userid} ";				
+				  $whereClause = " sticker_temp.user={$userid} ";				
 				}else if($friends != ""){
 				  $whereClause = " user.fbid in ($friends) ";
-				}else{
-				  $whereClause = " noun={$pid} and user={$user->id} ";				
+				}else {				  
+				  $user->loadFriends();				  
+				  $whereClause = " sticker_temp.noun={$pid} and ( sticker_temp.user='{$user->id}' or user.fbid in ({$user->friendsStr}) )  ";				
 				}
 				
 			
 							$stickersDataTempArray = $db->selectRows("select 
-				sticker_temp.id as sid , sticker_temp.user as user,
+				sticker_temp.id as sid , sticker_temp.user as user,icon.id as iconid, icon.url as icon,
 				food.name,food.fid as fid ,
 				place.pid as pid, place.name as placename,
 				place.city as city,
@@ -69,13 +71,12 @@ function buildPlace($pid,$name,$lat,$lng,$phone=null){
 				from sticker_temp
 				left outer join place on sticker_temp.noun = place.pid 
 				left outer join food on sticker_temp.verb = food.fid 
+				left outer join icon on sticker_temp.icon = icon.id 
 				left outer join user as user on sticker_temp.user = user.id
 				left outer join user as user_r on sticker_temp.recipient = user_r.id
+				
 				where " . $whereClause . " order by sticker_temp.created desc");
-			
-			
-			
-			
+			//echo $whereClause;
 			
 				while($stickerDataTemp = mysql_fetch_array($stickersDataTempArray))
 				  {							
@@ -95,29 +96,34 @@ function buildPlace($pid,$name,$lat,$lng,$phone=null){
 		
 			
 			    if($pid==-1){
-				  $whereClause = " user={$userid} ";				
+				  $whereClause = " sticker.user={$userid} ";				
 				}else if($friends!=""){
 				  $whereClause = " user.fbid in ($friends) ";
+				}else if($local){
+				   //$whereClause = " place.lat is near user.currentLocation ";				
 				}else{
-				  $whereClause = " noun={$pid} ";				
+				  $whereClause = " sticker.noun={$pid} ";				
 				}
 			
 			
 			
 				$stickersData = $db->selectRows("select 
 				sticker.id as sid , sticker.user as user,
-				place.pid as pid, place.name as placename,
+				place.pid as pid, place.name as placename,icon.id as iconid, icon.url as icon,
 				place.city as city,
 				food.name,food.fid as fid ,
 				user.name as username,user.photo as userphoto				
-				from sticker 
+				from sticker 				
 				inner join place on sticker.noun = place.pid 
 				inner join food on sticker.verb = food.fid 
 				inner join user on sticker.user = user.id
+				left outer join icon on sticker.icon = icon.id  
 				where " . $whereClause . " and sticker.status=1 order by sticker.created desc limit 20");
 				while($sticker = mysql_fetch_array($stickersData)) {							
 					array_push($stickers,$sticker);
 				}			
+				
+				
 			return $stickers;	
 			}
 			
