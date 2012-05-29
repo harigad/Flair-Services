@@ -1,6 +1,9 @@
 <?php
+class place{
+	private $db,$user;
+
 function buildPlace($pid,$name,$lat,$lng,$phone=null,$city=null){
-	global $db,$user;
+	//global $db,$user;
 			
 			$place['id'] = $pid;
 			$place['name'] = $name;
@@ -13,20 +16,20 @@ function buildPlace($pid,$name,$lat,$lng,$phone=null,$city=null){
 
 				$place['stickers'] = buildStickers($pid);						
 			
-				$foodsData = $db->selectRows("select distinct food.fid as fid,food.name,food.type from food inner join sticker on food.fid = sticker.verb and sticker.noun={$pid}");
+				$foodsData = $this->db->selectRows("select distinct food.fid as fid,food.name,food.type from food inner join sticker on food.fid = sticker.verb and sticker.noun={$pid}");
 				$foods = array();			
 				while($food = mysql_fetch_array($foodsData)) {							
 					array_push($foods,$food);
 				}
 
-				$foodsData = $db->selectRows("select distinct verb as fid,verbname as name,'' as type from sticker_temp where noun={$pid} and verb=-1 and status is NULL");
+				$foodsData = $this->db->selectRows("select distinct verb as fid,verbname as name,'' as type from sticker_temp where noun={$pid} and verb=-1 and status is NULL");
 				while($food = mysql_fetch_array($foodsData)) {							
 					array_push($foods,$food);
 				}	
 				
 				$place['foods'] = $foods;					
 
-				$castData = $db->selectRows("select distinct user.id as uid,user.name as name,user.photo as photo,user.photo_big as photo_big, user.role as role from user where user.pid={$pid}");
+				$castData = $this->db->selectRows("select distinct user.id as uid,user.name as name,user.photo as photo,user.photo_big as photo_big, user.role as role from user where user.pid={$pid}");
 				
 				$cast = array();	
 				
@@ -34,7 +37,7 @@ function buildPlace($pid,$name,$lat,$lng,$phone=null,$city=null){
 					array_push($cast,$castMember);
 				}
 
-				$castData = $db->selectRows("select distinct '-1'  as uid,recipientname as name, '' as photo,'' as photo_big,'' as role from sticker_temp where noun={$pid} and recipient=-1 and status is NULL");
+				$castData = $this->db->selectRows("select distinct '-1'  as uid,recipientname as name, '' as photo,'' as photo_big,'' as role from sticker_temp where noun={$pid} and recipient=-1 and status is NULL");
 				while($castMember = mysql_fetch_array($castData)) {						
 					array_push($cast,$castMember);
 				}
@@ -47,7 +50,7 @@ function buildPlace($pid,$name,$lat,$lng,$phone=null,$city=null){
 			
 			
 			function buildStickers($pid,$userid=0,$friends="",$local=false) {
-				global $db,$user;
+				//global $db,$user;
 				$stickers = array();	
 				
 				if($pid==-1){
@@ -55,12 +58,12 @@ function buildPlace($pid,$name,$lat,$lng,$phone=null,$city=null){
 				}else if($friends != ""){
 				  $whereClause = " user.fbid in ($friends) ";
 				}else {				  
-				  $user->loadFriends();				  
-				  $whereClause = " sticker_temp.noun={$pid} and ( sticker_temp.user='{$user->id}' or user.fbid in ({$user->friendsStr}) )  ";				
+				  $this->user->loadFriends();				  
+				  $whereClause = " sticker_temp.noun={$pid} and ( sticker_temp.user='{$this->user->id}' or user.fbid in ({$this->user->friendsStr}) )  ";				
 				}
 				
 			
-							$stickersDataTempArray = $db->selectRows("select 
+							$stickersDataTempArray = $this->db->selectRows("select 
 				sticker_temp.id as sid , sticker_temp.user as user,icon.id as iconid, icon.url as icon,
 				food.name,food.fid as fid ,
 				place.pid as pid, place.name as placename,
@@ -107,7 +110,7 @@ function buildPlace($pid,$name,$lat,$lng,$phone=null,$city=null){
 			
 			
 			
-				$stickersData = $db->selectRows("select 
+				$stickersData = $this->db->selectRows("select 
 				sticker.id as sid , sticker.user as user,
 				place.pid as pid, place.name as placename,icon.id as iconid, icon.url as icon,
 				place.city as city,
@@ -130,8 +133,8 @@ function buildPlace($pid,$name,$lat,$lng,$phone=null,$city=null){
 			
 			
 			function updatePlace($pid){
-			global $db;
-			$place=$db->selectRow("select * from place where pid='{$pid}'");
+			//global $db;
+			$place=$this->db->selectRow("select * from place where pid='{$pid}'");
 	        if ($place['address'] == "" || isset($place['address']) == false || isset($place['phone']) == false) {
 
                 $url = "https://maps.googleapis.com/maps/api/place/details/json?";
@@ -161,9 +164,10 @@ function buildPlace($pid,$name,$lat,$lng,$phone=null,$city=null){
 					}
 				}
 				
-                $db->update("place",$updateData,"pid = '{$pid}'");
+                $this->db->update("place",$updateData,"pid = '{$pid}'");
                 $phone = $r->result->formatted_phone_number;
                 $address = $r->result->formatted_address;
 			} 			
-		}	
-			?>
+		}
+
+}			?>
