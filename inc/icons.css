@@ -27,10 +27,9 @@
 
 
 .search_result{
-background-color:#777;min-height:60px;color:#999;text-align:left;font-size:60px;padding:10px;
-border-bottom:1px solid #aaa;
-margin-left:8px;
-margin-right:8px;color:#fff;
+background-color:#fff;min-height:60px;color:#6996F5;text-align:left;font-size:60px;padding:10px;
+border-bottom:1px solid #ddd;
+
 padding-left:60px;
 text-wrap:none;
 }
@@ -53,7 +52,7 @@ text-wrap:none;
 	font-size:14px;
 	line-height:80px;
 	margin:1px 1px 1px 1px;
-	background-color:#ccc;
+	background-color:#eee;
 	
 	background-position:center center;
 	background-repeat:no-repeat;
@@ -81,20 +80,18 @@ text-wrap:none;
 }
 
 .left_thumb{
-	margin-right:0px;         
+	  
 	background-color:#fff;
 	border-top-right-radius: 0px;
 	border-bottom-right-radius: 0px;
-	background-position:center 10px;
-	width:32px;padding-top:30px;height:60px;
-    color:#333;
+	
 
 }
 
 .right_thumb{
   margin-left:0px;
   display:inline-block;
-  width:220px;
+  width:172px;
   border-top-left-radius: 0px;
 	border-bottom-left-radius: 0px;
 

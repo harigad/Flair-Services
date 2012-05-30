@@ -14,12 +14,27 @@ class user {
                     'cookie' => true,
                 ));
 
+
+		if (is_null($this->fbid) && isset($_REQUEST['accessToken'])) { 
+		  $this->setAccessToken();		
+		}
+
+
         $this->fbid = $this->facebook->getUser();
-        if (is_null($this->fbid)) {         
-        } else {            
+        if (is_null($this->fbid)) {   
+			$this->id=-1;
+			$this->fbid=-1;
+			$this->loggedin = false;
+        } else {   
             $this->init($this->fbid);
+			$this->loggedin = true;
         }
     }
+	
+	
+	function setAccessToken(){
+	  $this->facebook->setAccessToken($_REQUEST['accessToken']);	
+	}
 
 
     function login(){
@@ -80,8 +95,16 @@ class user {
 
    
     function loadFriends($force=false) {	
+		  if($this->id==-1){
+			$this->friendsArr = array();
+			$this->friendsStr = "";     
+			return;
+		  }
+	
+	
+	
 	  if(isset($this->friendsArr)!=true || $force==true){
-		  $friendsFB = $this->fql("SELECT uid FROM user WHERE uid IN (SELECT uid2 FROM friend WHERE uid1 = " . $this->fbid .") and has_added_app=1");
+		  $friendsFB = $this->fql("SELECT uid FROM user WHERE uid IN (SELECT uid2 FROM friend WHERE uid1 = '" . $this->fbid ."') and has_added_app=1");
 		  $friendsStr="";
 			foreach($friendsFB as $key => $val){
 			  $friendsStr=$friendsStr . $val['uid'] . ",";		

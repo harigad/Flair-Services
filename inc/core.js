@@ -24,6 +24,25 @@ function addMarker(lat,lng){
     });
 }
 
+
+function clearField(field,val){
+
+  if(field.value==val){
+    field.value="";
+  }
+
+}
+
+
+function restoreField(field,val){
+  
+  if(field.value==""){
+    field.value=val;
+  }
+
+}
+
+
 function restoreSearchField(field,val,password){
     hideBar();
     if(field.value=="")   {
@@ -259,8 +278,13 @@ var stageforward;
 var currentURL;
 currentURL="noPage";
 
-function urlWatch(){
-    if(currentURL!= document.location.hash){
+
+function reload(){
+  urlWatch(true);
+}
+
+function urlWatch(reload){
+    if(currentURL!= document.location.hash || reload===true){
         currentURL = document.location.hash;
         //if there is not anchor, the loads the default section
         if(!currentURL){

@@ -10,6 +10,12 @@ $db = new db();
 $browser = new browser();
 $user = new user();
 
+
+if($user->loggedin != true) {
+  return;
+}
+
+$icon = $_POST['iconid'];
 $verb = $_POST['verb'];
 $noun = $_POST['noun'];
 $verbName = $_POST['verbName'];
@@ -17,10 +23,14 @@ $verbType = $_POST['verbType'];
 $recipient = $_POST['people'];
 $recipientName = $_POST['peopleName'];
 
+
 if (isset($verb) && isset($noun) && isset($recipient) && $noun!="" && $verb!="" && ($recipient!="" || $recipientName!="") ) {
     $dt = new dateObj();
 	
-    $newData['user'] = $user->id;	
+    $newData['user'] = $user->id;
+	
+	$newData['icon'] = $icon;
+	
     $newData['noun'] = $noun;
 	
     $newData['verb'] = $verb;

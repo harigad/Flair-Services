@@ -16,7 +16,7 @@ $flair.location = {
 			$flair.lat=position.coords.latitude;
 			$flair.lng=position.coords.longitude;
 			if($flair.location.places=="")
-			{$flair.location.loadPlaces();}
+			{$flair.location.loadPlaces(true);}
 	},
 	
 	forceLocation: function () {
@@ -48,7 +48,7 @@ $flair.location = {
 		});
 	},
 	
-	loadPlaces: function () {			
+	loadPlaces: function (dontPrint) {			
 		that = this;	
 		url="http://flair.me/search.php";
 		var data="&type=search";
@@ -67,8 +67,8 @@ $flair.location = {
 			dataType: "json",
 				success: function(t){			         
 						$flair.location.places = t;
-						if($flair.go.id=="home"){
-							$flair.go.homePlaces();
+						if(dontPrint!==true){
+							$flair.flair.places();
 						}
 						
 				}

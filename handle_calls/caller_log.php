@@ -32,4 +32,8 @@ $fromzip=$_REQUEST['FromZip'];
 			$new_call_data['activationid']=$aid;
 			$db->insert("activation_log",$new_call_data);
 	}
+	
+	//$db->debug=true;
+	//Check to see if called_number is a valid number
+	$rest_obj=$db->selectRow("select activation.uid,activation.id,code,activation.pid from activation inner join place on activation.pid=place.pid and place.phone='{$called_number}' and expired=0");
 ?>

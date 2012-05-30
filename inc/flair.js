@@ -4,14 +4,90 @@ $flair.lat=32.8958850;
 $flair.lng=-96.9693660;
 
 $flair.flair = {
-	init: function(pid,category) {
-		this.pid=pid;
-		this.food();
+
+
+	init: function(iconid,pid,pidName) {	
+	  $flair.login.init(this.begin(iconid,pid,pidName));
+	},
+
+
+	begin: function(iconid,pid,pidName) {
+	 
+	  this.iconid=iconid;
+	  
+	  if(!pid){
+		this.places(iconid);return;
+	  }
+	  
+	
+	  var that = this;
+	  
+			that.iconid=iconid;
+			that.pid=pid;
+			that.pidName=unescape(pidName);
+			that.food();
+		
+	},
+	
+	
+	refreshHomePlaces: function() {	  
+		var str="";						
+			
+			str += "<div  class='flair_thumb' style='position:relative;' ><img  style='position:absolute;top:45px;left:40px;' src='/images/ajax-loader.gif' ></div>";
+			
+			for(var i=0;i<21;i++) {
+				bgColor=$flair.go.backGroundColor[i];
+				str += "<div class='flair_thumb' style='position:relative;' ></div>";
+			}			
+	
+
+			$flair.window.print('places_holder',str);
+			
+		$flair.location.loadPlaces();	
 	},	
 	
+	
+	places: function() {
+		var iconid = this.iconid;
+	  	var places = $flair.location.places;
+			
+			var str="";
+	
+			var bgColor = $flair.go.backGroundColor[1];
+			
+			str +="<div id='places_holder' style='margin-left:0px;margin-right:0px;>";
+	
+		   // str += "<a onclick='$flair.flair.refreshHomePlaces();' ><div id='home_refresh' class='flair_thumb' style='background-color:" + bgColor + ";'  >reload</div></a>";
+	
+			for (place in places)
+			{   var colorId=parseInt(place)+1;
+			
+				var bgColor = $flair.go.backGroundColor[colorId%2];
+				var thisPage=places[place].page;
+				if(!thisPage)thisPage="place";
+				  str += "<a onclick='$flair.flair.init(\"" + iconid + "\",\"" + places[place].id + "\",\"" + escape(places[place].name) + "\");' ><div class='flair_thumb' style='background-color:" + bgColor + ";'  >" + places[place].name + "</div></a>";
+				
+			}
+			
+			var remainder = places.length;
+			for (var i=0;i<(21-remainder);i++)
+			{
+				var bgColor = $flair.go.backGroundColor[i%2];
+				str += "<div class='flair_thumb' style='background-color:" + bgColor + ";'  ></div>";
+			}
+			
+			str +="</div>";
+			
+			$flair.window.fullScreen(str);			
+			
+			if(places.length==0){			
+			  this.refreshHomePlaces();
+			}
+	},	
+	
+	
 	food: function() {		
-			this.searchType="food";		
-			$flair.window.showSearch(2);
+			$flair.search.init();
 	},	
 	
 	people: function() {
@@ -92,41 +168,46 @@ $flair.flair = {
 		$flair.window.fullScreen(str,"",false,true);			
 	},
 	
-		
-	
 	cancel: function() {		
-		var html = $('#place_flairs').html();
-		html = "<div style='text-align:center;' ><div style='style='vertical-align:top;position:relative;' ><div style='background-color:" + $flair.go.backGroundColor[1] + ";' class='flair_thumb loading' ></div><div  class='flair_thumb' style='background-color:#fff;color:#999;vertical-align:top;width:182px;padding:10px;line-height:80px;min-height:80px;text-align:center;' >please wait..</div></div></div>" + html;
-		$flair.window.print("place_flairs",html);
+		
 		$flair.window.cancelFullScreen();
+		$flair.header.setLogo("");
+		$flair.window.printPage("<div style='text-align:center;' ><img style='margin-left:auto;margin-right:auto;margin-top:100px;' src='/images/ajax-loader.gif' ></div>");
+		
 	},
 		
 	go: function(verbName,peopleName,people) {
-		var  url="http://flair.me/nominate.php";
+	$flair.newFlair=true;
+	
+		var  url="nominate.php";
 		var  data="&noun=" + this.pid;
 		data+="&verb=" + -1;
 		data+="&verbName=" + verbName;
 		data+="&verbType=" + this.ftype;
 		data+="&people=" + people;
 		data+="&peopleName=" + peopleName;
+		data+="&iconid=" + this.iconid;
+		if($flair.login.accessToken){
+		  data+="&accessToken=" + $flair.login.accessToken;	
+		}
 
 		var that = this;
 		
-		that.cancel();
+		$flair.go.url("#page=place&title=" + escape(that.pidName) + "&pid=" + that.pid);
 		
 			flairAjaxRequest=$.ajax({
 			type: "POST",
-			url: url,
+			url: $flair.go.domain + url,
 			data:data,
 			dataType: "json",
-				success: function(t){
-				    $flair.newFlair=true;
-					that.updateThumbs(t);				
+				success: function(t){				    
 					if(t.status!=1){			
 						//Display Verification Needed Message
 						$flair.window.fullScreen(t.message,t.title,true,false);						
 					}else{
-						$flair.user.loadUser("me");
+						//that.updateThumbs(t);				
+					    //$flair.go.place(that.pidName,that.pid);
+						//$flair.go.url("#page=place&title=" + escape(that.pidName) + "&pid=" + that.pid);
 					}
 				}
 			});	
@@ -134,24 +215,15 @@ $flair.flair = {
 	
 	updateThumbs: function(t) {	
 		var places = $flair.location.places;
-		var pid = t.pid;
-		var thisPlace;
-		var stickers;
-			for (place in places)
+		
+		    for (place in places)
 			{			
 				if(places[place].id==pid){
-					thisPlace=places[place];
+					places[place]=place;
 				}			
-			}		
-			
-			if(thisPlace){	
-				thisPlace.stickers = t.stickers;
-				thisPlace.foods = t.foods;
 			}
+			$flair.go.url("#page=place&title=" + escape(this.pidName) + "&pid=" + this.pid);
 			
-			if(pid == $flair.go.id){
-				$flair.go.placeFlairs(thisPlace.stickers);
-			}
 	}
 	
 }

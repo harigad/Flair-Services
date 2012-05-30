@@ -64,6 +64,14 @@ if($type=="user" ){
 }else if ($type == "friends"){
 
 		 include_once 'functions/friends.php';
+
+}else if ($type == "role"){
+
+		 include_once 'functions/role.php';
+		 
+}else if ($type == "notifications"){
+
+		 include_once 'functions/notifications.php';		 
 		
 }else if ($type == "updatePhone") {
 		updatePlace($id);		
@@ -78,6 +86,9 @@ if($type=="user" ){
 		}
 		
 		echo json_encode($place);
+}else if($type == "local"){
+	$stickers = buildStickers(0,0,"",true);
+    echo json_encode($stickers);
 }
 
 

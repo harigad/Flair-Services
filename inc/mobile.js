@@ -40,7 +40,7 @@ function init(){
     directionsDisplay = new google.maps.DirectionsRenderer();
 
 	$flair.scroll.init();
-	//$flair.header.showSearch();
+	$flair.header.showSearch();
     
 	urlWatch();
 	$flair.scroll.enableLinksOnTap('header_content');

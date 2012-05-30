@@ -13,6 +13,7 @@ $flair.header = {
 	},
 		
 	showSearch: function () {
+	    $('#header_fullscreen').hide();
 		$('#fullScreen').hide();
 		this.show();
 		$('#logo').hide();
@@ -26,13 +27,14 @@ $flair.header = {
 		$('#logo').html(str);
 	},
 	
-	hideSearch: function () {		
+	hideSearch: function () {
+	     $('#header_fullscreen').hide();
 		$('#search_menu').hide();
 		if($flair.go.id=="home"){
 			$('#home_menu').hide();									
 			$('#header_default_left_btn').hide();
 			//this.setLogo('<img src="/images/logos/flair_logo.png" style="height:50px;" >');
-			this.setLogo("Flair");			
+			this.setLogo("<img src='images/logo_small.png' style='margin-top:8px;' >");			
 		}else{			
 			this.setLogo($flair.go.title);			
 			$('#header_default_left_btn').show();		
@@ -42,7 +44,8 @@ $flair.header = {
 	},	
 	
 	show: function() {		
-		$('#header_fullscreen').html("");
+	     $('#header_fullscreen').hide();
+		
 		$('#header_default').show();
 	},
 	
@@ -55,6 +58,7 @@ $flair.header = {
 	},
 	
 	set: function(title) {	
+	      $('#header_fullscreen').hide();
 		$('#searchinput').val(title);
 	},
 	

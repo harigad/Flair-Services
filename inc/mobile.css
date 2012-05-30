@@ -3,8 +3,9 @@ root {
 }
 body{
     margin:0px;text-align:center;
-	background-image:url(/iimages/stripes.jpg);
-	background-color:#333;
+	//background-image:url(/iimages/stripes.jpg);
+	background-color:#fff;
+	
 }
 
 a{
@@ -31,19 +32,42 @@ a{
 	text-align:center;
 	line-height:50px;
 	font-size:1.2em;
-	color:#6996F5;
+	color:#fff;
 }
 
+
+#textarea{
+  	z-index:999999;
+	padding:10px;
+	background-color:#ddd;
+	text-align:center;
+	height:200px;
+	text-align:left;
+	display:none;
+}
+
+textarea{
+   height:180px;
+   padding:5px;
+   width:200px;
+   background-color:#eee;
+   font-size:1.8em;
+   color:#999;
+}
 
 
 .headerBg{
     width:100%;
     text-align:center;
     position:fixed;top:0px;height:50px;
-	background-repeat:repeat-x;	
+	
 	z-index:9999;	
-	background-color:#333;
+	border-bottom:1px outset #6996F5; 
+	background-repeat:repeat-x;
+	background-color:#6996F5;
 }
+
+
 
 #header_content{	
 	text-align:left;	
@@ -51,8 +75,9 @@ a{
 }
 
 #map_canvas_container{
--moz-border-radius: 2px;overflow:hidden;-webkit-border-radius: 2px;height:100px;
-width:302px;margin-left:auto;margin-right:auto;background-color:#999;
+height:300px;
+background-color:#eee;
+position:relative;top:-6px;
 }
 
 #map_canvas{
@@ -109,11 +134,7 @@ width:302px;margin-left:auto;margin-right:auto;background-color:#999;
 
 	
 #header_fullscreen{
-	text-align:center;
-	font-size:1.4em;
-	font-weight:bold;
-	color:#3B5998;
-	padding-top:10px;
+
 }
 
 #canvas{
@@ -124,12 +145,12 @@ width:302px;margin-left:auto;margin-right:auto;background-color:#999;
 
 #main{  
     position:relative;margin-left:auto;margin-right:auto;
-    top:50px;
+    top:58px;
 	padding-botton:50px;
 }
 
 #scroller{		
-	position:relative;top:0px;width:100%;
+	position:relative;top:0px;width:100%;min-height:420px;
 	-webkit-overflow-scrolling:touch;
 }
 
@@ -201,8 +222,31 @@ width:302px;margin-left:auto;margin-right:auto;background-color:#999;
     color:#333;
     -moz-border-radius: 4px;
     -webkit-border-radius: 4px;
-    border:0px solid #eee;
-    background-color: #999;
+    border:0px solid #999;
+    background-color: #fff;
+    
+}
+
+
+.placeSearchInput{
+    margin-top:5px;margin-right:8px;margin-left:8px;
+    z-index:9999;
+    display:inline-block;
+    width:295px;
+    padding-left:10px;
+    padding-right:5px;
+    padding-top:12.5px;
+	padding-bottom:12.5px;
+    padding-right:15px;   
+    font-size:14px;
+    background-image:none;
+    background-repeat:no-repeat;
+	background-position:5px 2px;
+    color:#999;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border:0px solid #999;
+    background-color: #eee;
     
 }
 
@@ -210,6 +254,14 @@ width:302px;margin-left:auto;margin-right:auto;background-color:#999;
   font-size:0.8em;vertical-align:middle;color:#3B5998;float:right;
   display:inline-block;padding-top:15px;padding-bottom:15px;font-weight:bold;
   text-align:center; 
+}
+
+.header_button_fullscreen{
+  font-size:0.8em;vertical-align:middle;color:#eee;float:right;
+  display:inline-block;padding:5px;margin-top:12px;font-weight:bold;margin-left:0px;margin-right:0px;
+  text-align:center;
+     -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
 }
 
 .image_thumb{

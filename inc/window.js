@@ -9,7 +9,7 @@ $flair.window = {
 		this.hideBar();
 	
 		//hide header
-		$flair.header.hide(title);
+		$flair.header.hide();
 		
 		//hide page		
 		$('#search_content').hide();			
@@ -25,13 +25,15 @@ $flair.window = {
 		if(fade){
 			$('#fullScreen').fadeIn("fast");	
 		}else{
+		    
 			$('#fullScreen').show();
 		}
+		 $('#header_fullscreen').fadeIn("fast");
 		
 	},
 		
 	cancelFullScreen: function(noFade) {
-		
+		 $('#header_fullscreen').hide();
 		var map_canvas = $("#map_canvas");
 		if(map_canvas){
 			$("#map_canvas").hide();
@@ -61,7 +63,7 @@ $flair.window = {
 		}
 		
 		
-		$('#page_content').show();
+		$('#page_content').fadeIn('fast');
 		
 		//show main menu
 		$flair.menu.init('main');
@@ -77,6 +79,8 @@ $flair.window = {
 	},	
 
 	printPage: function(str,noFade) {
+		//Hide
+		$('#page_content').hide();
 		
 		//print data
 		this.print('page_content',str);
@@ -100,16 +104,25 @@ $flair.window = {
 		return this.animateTime+1000;
 	},
 	
+	onChange: function(){
+	   if(this.mode==='place'){
+	      $flair.placeSearch.process();
+	   }else{
+	      $flair.search.process();
+	   }
+	
+	},	
 	
 	showSearch: function(id) {		
+	    this.mode=id;
 		$('#page_content').hide();		 		 
-	   	
+	   	$('#result').html("");
 		$('#search_content').show();
 		$flair.header.set("");
 		$flair.header.showCancel();
 
 		$('#searchinput').focus();
-		$flair.search.init(id);
+		
 	},
 	
 	hideSearch: function() {		

@@ -1,41 +1,27 @@
 <?php
-error_reporting(E_ALL ^ E_NOTICE);
-
-include_once 'core/dateClass.php';
-include_once 'core/db.php';
 include_once 'core/Browser.php';
-include_once 'core/user.php';
-$db = new db();
 $browser = new browser();
-$user = new user();
-
-//Checking if users id is set or not
-
-if (isset($user->id) != true) {
-    header("Location: {$user->login()}");
-}
-
 ?>
 <html>
     <head>
     	<title>Flair</title>
-    	<link rel="icon" type="image/ico" href="favicon.ico"> 
-	
+    	<link rel="icon" type="image/ico" href="favicon.ico"> 			
         <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; minimum-scale=1.0; user-scalable=0;" />
         <link type="text/css" href="inc/mobile.css" rel="stylesheet" />    
-		<link type="text/css" href="inc/icons.css" rel="stylesheet" />    		
-		
-		
+		<link type="text/css" href="inc/icons.css" rel="stylesheet" />    				
 			<?php
 				if($browser->isMobile()!=true){
 					echo '<link type="text/css" href="inc/pc.css" rel="stylesheet" />';
 				}			
 			?>
-		
-		
         <script type="text/javascript" src="/inc/js/jquery-1.3.2.js"></script>
-		<script type="text/javascript" src="inc/tree.js"></script>		
-		<script type="text/javascript" src="inc/flair.js"></script>		
+		<script type="text/javascript" src="inc/tree.js"></script>			
+		<script type="text/javascript" src="inc/flair.js"></script>
+		<script type="text/javascript" src="inc/login.js"></script>	
+		<script type="text/javascript" src="inc/place.js"></script>	
+		<script type="text/javascript" src="inc/cast.js"></script>	
+		<script type="text/javascript" src="inc/role.js"></script>	
+		<script type="text/javascript" src="inc/home.js"></script>		
 		<script type="text/javascript" src="inc/window.js"></script>		
 		<script type="text/javascript" src="inc/header.js"></script>		
 		<script type="text/javascript" src="inc/go.js"></script>		
@@ -43,26 +29,42 @@ if (isset($user->id) != true) {
 		<script type="text/javascript" src="inc/scroll.js"></script>	
 		<script type="text/javascript" src="inc/menu.js"></script>
 		<script type="text/javascript" src="inc/search.js"></script>
+		<script type="text/javascript" src="inc/placeSearch.js"></script>
 		<script type="text/javascript" src="inc/map.js"></script>
 		<script type="text/javascript" src="inc/user.js"></script>
 		<script type="text/javascript" src="inc/food.js"></script>
 		<script type="text/javascript" src="inc/core.js"></script>
         <script type="text/javascript" src="inc/mobile.js"></script>
-		<script type="text/javascript" src="inc/flairThumb.js"></script>
+		<script type="text/javascript" src="inc/flairThumb.js"></script>		
+		<script type="text/javascript" src="inc/likes.js"></script>		
+		<script type="text/javascript" src="inc/comment.js"></script>
+		<script type="text/javascript" src="inc/notifications.js"></script>
+				<script type="text/javascript" src="inc/settings.js"></script>
+        <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=true&libraries=places"></script> 
 		
-        <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=true&libraries=places"></script>
-        <style>            
-			 .boy{
-				background-image:url(/images/icons/boy.png);
-			 }
-			 .girl{
-				background-image:url(/images/icons/girl.png);
-			 }
-        </style>
+		
+		<!-- phonegap -->
+		<script src="inc/js/phonegap-1.2.0.js"></script>
+	    <!-- phonegap facebook plugin -->
+		<script src="inc/js/pg-plugin-fb-connect.js"></script>
+	    <!-- facebook js sdk -->
+		<script src="inc/js/facebook_js_sdk.js"></script>
+		
     </head>
     <html>
         <body onload="init();" >
-            <div id="canvas" >
+		            <div id="fb-root"></div>
+					
+					<a onclick="$flair.login.submit();" ><div id="login_container" style='z-index:-1;margin-left:auto;display:none;margin-right:auto;position:relative;width:320px;height:480px;background-image:url(images/splash_bg.png);' >
+					<img id='login' src="images/splash_no_bg.png" style='position:absolute;top:0px;left:0px;' >
+					<div id='login_btn' style='display:none;font-weight:bold;font-size:50px;vertical-align:middle;position:absolute;top:250px;left:90px;' >
+					<img src="images/lock_100.png" style='vertical-align:middle;height:60px;' >
+					</div>
+					
+					</div></a>
+            <div id="canvas" style='display:block;position:absolute;top:0px;left:0px;' >
+				
+			
 				<!--------------------------Header---------------------------------------->
                 <div class="headerBg" >				
 				<div id="header_content" >
@@ -72,14 +74,20 @@ if (isset($user->id) != true) {
 							</div>
 						</a>
 						
-						<div id="logo" ></div>
+						<div id="logo" ></div>						
+						
+						
+						
+						
+						
+						
 						
 						<div id="search_menu" >
 							<div id="header_default_search_btn" >                    
 							</div>
-							<input maxlength="60"   autocorrect="off" autocapitalize="off" autocomplete="off" id="searchinput" onkeyup="search();" type="text" value="search" class="searchinput" >
+							<input maxlength="60"   autocorrect="off" autocapitalize="off" autocomplete="off" id="searchinput" onkeyup="$flair.window.onChange();" type="text" value="search" class="searchinput" >
 							<a onclick="cancel();" >
-							<div  class="header_button" style="width:75px;" >
+							<div  class="header_button" style="color:#eee;width:75px;" >
 								cancel
 							</div>
 							</a>
@@ -107,10 +115,22 @@ if (isset($user->id) != true) {
                     </div>
 					<div id="header_fullscreen" >
 					
+							<a onclick="cancel();" >
+							<div  class="header_button_fullscreen" style="width:75px;" >
+								cancel
+							</div>
+							</a>
+							
+							<a onclick="$flair.flair.refreshHomePlaces();" >
+							<div class="header_button_fullscreen" style="float:left;width:75px;" > 
+							reload
+							</div></a>
+							
+					
 					</div>
                 </div>
 				</div>
-				
+				<div id="textarea" ><textarea onblur="$flair.comments.hide();"  id="comments_input" ></textarea></div>
 				
 
 				<!--------------------------Header---------------------------------------->
@@ -158,19 +178,14 @@ if (isset($user->id) != true) {
 			</div>
 			<!--------------------------Footer---------------------------------------->
            
-            <div id="fb-root"></div>
-            <script>
-                window.fbAsyncInit = function() {
-                    FB.init({appId: '137205592962704', status: true, cookie: true, xfbml: true});
-                }
-                $(function(){
-                    var e = document.createElement('script');
-                    e.async = true;
-                    e.src = document.location.protocol + '//connect.facebook.net/en_US/all.js';
 
-                    document.getElementById('fb-root').appendChild(e);
-                }());
-            </script>			
+            <script>               
+                $(function(){
+                    
+		FB.init({appId: '201613399910723', status: true, cookie: true, xfbml: true});
+					
+				});	
+					</script>			
 			
         </body>
     </html>

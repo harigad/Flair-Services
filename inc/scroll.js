@@ -16,13 +16,15 @@ $flair.scroll = {
 
 		this.scroller = document.getElementById('scroller');
 
+		this.searchCanvas = document.getElementById('search_content');
+		
 	
 
-	//	this.canvas.addEventListener('touchstart', this.touchstart, false);
+		this.searchCanvas.addEventListener('touchstart', this.touchstart, false);
 
-	//	this.canvas.addEventListener('touchmove', this.touchmove, false);
+		this.searchCanvas.addEventListener('touchmove', this.touchmove, false);
 
-	//	this.canvas.addEventListener('touchend', this.touchend, false);			
+		this.searchCanvas.addEventListener('touchend', this.touchend, false);			
 
 		
 

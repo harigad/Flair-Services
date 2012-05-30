@@ -2,12 +2,12 @@ $flair.search = {
 
 	ajaxRequest: null,
 	searchMode: "place",
-
-	init: function (searchMode) {
 	
-		if(searchMode){
-			this.searchMode = searchMode;
-		}
+	init: function() {
+	  $flair.window.showSearch('flair');	
+	},
+
+	process: function () {	
 		
 		if($flair.lat==0 || $flair.lng==0){
 			getLocation();        
@@ -184,7 +184,7 @@ $flair.search = {
 					var str="";										
 					 str=str + '<a onclick=$flair.search.userUpdate("' + escape(username) + '",' + userid + '); >';
 					 str= str + '<div style="vertical-align:top;position:relative;" >';
-					 str=str + '<div  class="search_result" >';
+					 str=str + '<div  class="search_result" style="background-image:url(images/icons/10.png);padding-left:100px;background-repeat:no-repeat;background-position:left center;" >';
 					 str=str + username;
 					 str=str + '</div></div></a>';					 
 					return str;
