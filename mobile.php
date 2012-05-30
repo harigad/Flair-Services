@@ -1,7 +1,3 @@
-<?php
-include_once 'core/Browser.php';
-$browser = new browser();
-?>
 <html>
     <head>
     	<title>Flair</title>
@@ -9,11 +5,7 @@ $browser = new browser();
         <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; minimum-scale=1.0; user-scalable=0;" />
         <link type="text/css" href="inc/mobile.css" rel="stylesheet" />    
 		<link type="text/css" href="inc/icons.css" rel="stylesheet" />    				
-			<?php
-				if($browser->isMobile()!=true){
-					echo '<link type="text/css" href="inc/pc.css" rel="stylesheet" />';
-				}			
-			?>
+			
         <script type="text/javascript" src="/inc/js/jquery-1.3.2.js"></script>
 		<script type="text/javascript" src="inc/tree.js"></script>			
 		<script type="text/javascript" src="inc/flair.js"></script>
@@ -177,35 +169,12 @@ $browser = new browser();
 				
 			</div>
 			<!--------------------------Footer---------------------------------------->
-           
-
             <script>               
                 $(function(){
                     
 		FB.init({appId: '201613399910723', status: true, cookie: true, xfbml: true});
 					
 				});	
-					</script>			
-			
+					</script>
         </body>
     </html>
-    <?php
-                            function sticker($user_photo, $user_id, $user_name, $pid, $placename, $fid, $foodname,$foodType, $vicinity, $lastRow=false) { 
-							$style='';
-							
-							if($lastRow){
-									$style='style="border-bottom:0px;"';							
-							}
-							
-							?>
-                                <div class="text"  <?php echo $style; ?> >
-                                   <a href="#page=user&title=<?php echo $user_name; ?>&id=<?php echo $user_id ?>" ><img src="<?php echo $user_photo ?>" style="float:left;vertical-align:top;">
-            <span style="color:#999;font-weight:bold;" ><?php echo $user_name ?></span></a><br>
-                                    <a href="#page=food&title=<?php echo strtolower($foodname) ?>&id=<?php echo strtolower($fid); ?>" ><span class='food <?php echo $foodType ?>' ><?php echo strtolower($foodname); ?></span></a>
-                                    <span style="color:#999;" >@</span>
-                                    <a href="#page=place&title=<?php echo strtolower($placename) ?>&id=<?php echo strtolower($pid); ?>" ><span class='place' ><?php echo $placename; ?></span></a>
-                                     <span style="color:#999;" >in</span> <a href="#page=city&title=<?php echo $vicinity; ?>&id=<?php echo $pid ?>" ><span class="city"><?php echo $vicinity; ?></span></a>
-                               
-                                    <div style="clear:left;" ></div>
-                                </div>
-<?php } ?>
