@@ -122,17 +122,16 @@ $flair.user = {
 		
 		
 		if($flair.login.user.id==this.user.id){	
-	
 		
 			
 		 if($flair.login.isCastMember()){
-		    strTitle = "My Settings ";
+		    strTitle = $flair.login.user.place.name;
 		    strURL = "#page=role&title=My Settings&id=me";
 		  }else if(this.user.activation_pid){
-		   strTitle = "Verification Pending for " + this.user.activation_name;		  
+		   strTitle = "Verification Pending for " + $flair.login.user.place.name;		  
 		   strURL = "#page=role&title=Verification&id=" + this.user.activation_pid;
 		  }else{
-		   strTitle = "My Settings ";
+		   strTitle = "My Settings";
 		   strURL = "#page=role&title=New Cast Member&id=me";
 		  }
 		str += "<a href='" + strURL + "' ><div style='background-color:#f1f1f1;vertical-align:middle;padding:5px;' ><img src='images/settings2.png' style='heignt:15px;vertical-align:middle;' >";

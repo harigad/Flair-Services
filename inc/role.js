@@ -185,8 +185,6 @@ $flair.role =  {
   
 	$flair.go.back();
   
-  
-  
   },
   
   
@@ -215,14 +213,8 @@ $flair.role =  {
 		 str += "<a onclick='$flair.role.newCode();' <div class='flair_thumb' style='width:130px;background-color:#6996F5;color:#fff;' >YES</div></a>";
 		
 		   str +="</div>";
-		
-		 
 		 
 		str += "</div>";
-		
-	
-		
-		
 		
 		$flair.window.printPage(str);
 		
@@ -232,9 +224,38 @@ $flair.role =  {
 			$flair.map.showMap(that.placeObj.lat,that.placeObj.lng,that.placeObj.name);		
 		},500);
 	
-  
   },
   
+  
+  changeRole:function() {
+    var str="";
+	    str += "<div style='margin-left:8px;margin-right:8px;' >";
+		str += "<div>";
+		  str += "<div class='flair_thumb' style='vertical-align:top;width:80px;height:80px;' id='map_canvas' ></div>";
+			  
+		   str += "<span style='vertical-align:top;width:190px;display:inline-block;font-size:2.5em;font-family:verdana;color:#ddd;padding:5px;white-space: nowrap;overflow:hidden;' >";
+		       str += this.placeObj.name;		   
+			   str += "<br><span style='font-size:0.5em;font-family:verdana;color:#6996F5;padding:5px;' >";
+		       str += this.placeObj.city;
+			   str += "</span>";			   
+		   
+		   str += "</span>";		 	   
+		 str += "</div>";
+		 str += "</div>";
+		 $flair.window.printPage(str);
+	 
+	 
+	 
+  },
+
+  printDetails:function(){
+     if($flair.login.getRole()){
+	      
+	 }else{
+	       this.changeRole();
+	 
+	 }
+  },  
     
   begin: function(title,id){
 	var placeObj;
@@ -276,11 +297,5 @@ $flair.role =  {
 	
 	}
   
-  
   }
-  
-
-
-
-
 }
