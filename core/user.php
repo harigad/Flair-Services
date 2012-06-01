@@ -1,5 +1,5 @@
 <?php
-include_once "facebook.php";
+include_once "facebook_local.php";
 
 class user {
     function __construct() {

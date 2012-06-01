@@ -1,24 +1,23 @@
 $flair.login = {
 
-
   init:function(callBack){
   var that = this;
-        FB.getLoginStatus(function(response) {	
-		if (response.status == 'connected') {
-		   that.accessToken = FB.getSession().access_token;
-		   
-		   if(!that.user){
-		   
-		   that.loadMe(callBack);
-		   
-		   }else{
-		   
-			 try{ callBack();	}catch(e){}	
-		   }
-		}else{		
-		 that.show();
-		 }
-		});
+	        FB.getLoginStatus(function(response) {
+	     	if (response.status == 'connected') {
+			   that.accessToken = response.authResponse.accessToken;
+			   
+			   if(!that.user){
+			   
+			   that.loadMe(callBack);
+			   
+			   }else{
+			   
+				 try{ callBack();	}catch(e){}	
+			   }
+			}else{		
+			 that.show();
+			 }
+			});
   },
 
   
@@ -95,20 +94,24 @@ $flair.login = {
         },
         { scope: "email,publish_stream" }
      );
-  },
-  
+  },  
      
   isCastMember: function(){
   
-	 if(this.user.pid){
+	 if(this.getPid()){
 	   return true;
 	 }else{
 	  return false;
 	  }
 	
   },
-
-
-
+    
+  getRole: function(){
+	return this.user.place.role;  
+  },
+  
+  getPid: function(){
+   return this.user.place.pid;  
+  }
 
 }

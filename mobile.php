@@ -1,3 +1,10 @@
+ <?php
+ $cache_expire = 60*60*24*365;
+ header("Pragma: public");
+ header("Cache-Control: max-age=".$cache_expire);
+ header('Expires: ' . gmdate('D, d M Y H:i:s', time()+$cache_expire) . ' GMT');
+ ?>
+
 <html>
     <head>
     	<title>Flair</title>
@@ -172,9 +179,9 @@
             <script>               
                 $(function(){
                     
-		FB.init({appId: '201613399910723', status: true, cookie: true, xfbml: true});
+		FB.init({appId: '201613399910723', status: true, cookie: true, xfbml: false});
 					
-				});	
+				});
 					</script>
         </body>
     </html>
