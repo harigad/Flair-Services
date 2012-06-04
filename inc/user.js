@@ -124,7 +124,7 @@ $flair.user = {
 		if($flair.login.user.id==this.user.id){	
 		
 			
-		 if($flair.login.isCastMember()){
+		 if($flair.login.isCastMember()===true){
 		    strTitle = $flair.login.user.place.name;
 		    strURL = "#page=role&title=My Settings&id=me";
 		  }else if(this.user.activation_pid){
@@ -186,7 +186,7 @@ $flair.user = {
 			url: $flair.go.domain + url,
 			data:data,
 			dataType: "json",
-				success: function(user){						
+				success: function(user){	
 						if($flair.go.id==user.id){
 							that.users[user.id] = user;
 							that.user = user;

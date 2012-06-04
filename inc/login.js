@@ -97,21 +97,27 @@ $flair.login = {
   },  
      
   isCastMember: function(){
-  
 	 if(this.getPid()){
 	   return true;
 	 }else{
 	  return false;
 	  }
-	
   },
     
   getRole: function(){
-	return this.user.place.role;  
+  	try{
+		return this.user.place.role;
+	}catch(e){
+		return false;
+	}  
   },
   
   getPid: function(){
-   return this.user.place.pid;  
+   try{
+   		return this.user.place.pid;
+   }catch(e){
+   		return false;
+   }  
   }
 
 }

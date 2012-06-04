@@ -8,13 +8,16 @@ class db{
     }
 
     function open(){
-        $dbuser="w155173470";
-        $dbpass="KrGxwX.PlPfa";
-        $thisdb="nibhor";
-        $con = mysql_connect("localhost",$dbuser,$dbpass);
+        $dbuser="694952_w1551734";
+        $dbpass="KrGxwX.PlPfa1";
+        $thisdb="694952_nibhor";
+        $thisHost="mysql51-002.wc1.ord1.stabletransit.com";
+        $con = mysql_connect($thisHost,$dbuser,$dbpass);
+        
         if (!$con) {
             die('Could not connect: ' . mysql_error());
         }// some code
+       
         mysql_select_db($thisdb, $con);
 
         //mysql_set_charset('utf8',$con);

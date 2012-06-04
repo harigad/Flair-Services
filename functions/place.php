@@ -47,7 +47,9 @@ function buildPlace($pid,$name,$lat,$lng,$phone=null,$city=null){
 			
 			
 			function buildStickers($pid,$userid=0,$friends="",$local=false) {
+			
 				global $db,$user;
+			
 				$stickers = array();	
 				
 				if($pid==-1){
@@ -62,7 +64,7 @@ function buildPlace($pid,$name,$lat,$lng,$phone=null,$city=null){
 			
 							$stickersDataTempArray = $db->selectRows("select 
 				sticker_temp.id as sid , sticker_temp.user as user,icon.id as iconid, icon.url as icon,
-				food.name,food.fid as fid ,
+		
 				place.pid as pid, place.name as placename,
 				place.city as city,
 				user.name as username,user.photo as userphoto,
@@ -70,7 +72,7 @@ function buildPlace($pid,$name,$lat,$lng,$phone=null,$city=null){
 				sticker_temp.recipientname as recipientname_temp,sticker_temp.verbname as verbname_temp 
 				from sticker_temp
 				left outer join place on sticker_temp.noun = place.pid 
-				left outer join food on sticker_temp.verb = food.fid 
+			
 				left outer join icon on sticker_temp.icon = icon.id 
 				left outer join user as user on sticker_temp.user = user.id
 				left outer join user as user_r on sticker_temp.recipient = user_r.id
@@ -111,11 +113,10 @@ function buildPlace($pid,$name,$lat,$lng,$phone=null,$city=null){
 				sticker.id as sid , sticker.user as user,
 				place.pid as pid, place.name as placename,icon.id as iconid, icon.url as icon,
 				place.city as city,
-				food.name,food.fid as fid ,
+				
 				user.name as username,user.photo as userphoto				
 				from sticker 				
 				inner join place on sticker.noun = place.pid 
-				inner join food on sticker.verb = food.fid 
 				inner join user on sticker.user = user.id
 				left outer join icon on sticker.icon = icon.id  
 				where " . $whereClause . " and sticker.status=1 order by sticker.created desc limit 20");
