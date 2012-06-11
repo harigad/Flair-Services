@@ -103,6 +103,15 @@ $flair.login = {
 	  return false;
 	  }
   },
+  
+  isActivationPending: function(){
+  	try{
+		return this.user.place.activation_pid;
+	}catch(e){
+		return false;
+	}  
+  
+  },
     
   getRole: function(){
   	try{

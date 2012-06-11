@@ -3,8 +3,7 @@ root {
 }
 body{
     margin:0px;text-align:center;
-	//background-image:url(/iimages/stripes.jpg);
-	background-color:#fff;
+	font-family:'PT Sans',sans-serif;font-size:62.5%;;color:#444;
 	
 }
 

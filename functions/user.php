@@ -14,15 +14,19 @@
 						
 					if($myProfile){
 					
-						  $role=$db->selectRow("Select * from role where uid={$user->id} limit 1");
+						  $role=$db->selectRow("Select role.role,place.name,place.pid from role inner join place on role.pid=place.pid where uid={$user->id} limit 1");
 						  if($role){
-							$userJSON['pid']=$role['pid'];
-							$userJSON['role']=$role['role'];						
+							$place['pid']=$role['pid'];
+							$place['name']=$role['name'];
+							$place['role']=$role['role'];	
+							$userJSON['place']=$place;					
 						  }else{
 						    $act=$db->selectRow("select place.pid, place.name from place inner join activation on place.pid=activation.pid where activation.uid={$user->id} and expired=0");						   
 						   if($act){
-						     $userJSON['activation_pid']=$act['pid'];
-							 $userJSON['activation_name']=$act['name'];
+						     $place['activation_pid']=$act['pid'];
+							 $place['name']=$act['name'];						
+							 $userJSON['place']=$place;	
+
 						   }
 						
 						}

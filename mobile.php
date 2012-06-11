@@ -61,7 +61,7 @@
 					</div>
 					
 					</div></a>
-            <div id="canvas" style='display:block;position:absolute;top:0px;left:0px;' >
+            <div id="canvas" style='display:block;width:320px;' >
 				
 			
 				<!--------------------------Header---------------------------------------->

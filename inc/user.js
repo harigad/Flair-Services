@@ -126,18 +126,18 @@ $flair.user = {
 			
 		 if($flair.login.isCastMember()===true){
 		    strTitle = $flair.login.user.place.name;
-		    strURL = "#page=role&title=My Settings&id=me";
-		  }else if(this.user.activation_pid){
+		    strURL = "#page=place&title=" + escape(strTitle) + "&id=" + $flair.login.user.place.pid;
+		    //strURL = "#page=role&title=My Settings&id=me";
+		  }else if($flair.login.isActivationPending()){
 		   strTitle = "Verification Pending for " + $flair.login.user.place.name;		  
-		   strURL = "#page=role&title=Verification&id=" + this.user.activation_pid;
+		   strURL = "#page=role&title=Verification&id=" + $flair.login.user.place.activation_pid;
 		  }else{
-		   strTitle = "My Settings";
+		   strTitle = "<span style='line-height:40px;' >My Settings</span>";
 		   strURL = "#page=role&title=New Cast Member&id=me";
 		  }
-		str += "<a href='" + strURL + "' ><div style='background-color:#f1f1f1;vertical-align:middle;padding:5px;' ><img src='images/settings2.png' style='heignt:15px;vertical-align:middle;' >";
+		str += "<a href='" + strURL + "' ><div style='border:0px dotted #ccc;border-top-width:0px;border-bottom-width:1px;vertical-align:top;padding:5px;padding-top:0px;' ><img src='images/oscar_48.png' style='heignt:15px;vertical-align:top;' >";
 		 //ebugger;
-		 
-		  str += strTitle;
+		  str += strTitle ;
 		  str += "</div></a>";
 		}else{
 		
