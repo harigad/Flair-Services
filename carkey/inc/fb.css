@@ -1,0 +1,131 @@
+body{
+    margin:0px;text-align:center;
+	font-family:'PT Sans',sans-serif;font-size:62.5%;;color:#444;
+    	
+}
+
+.signup{
+ background-image:url(../images/bg.png);
+ background-repeat:repeat-x;
+ height:100%;
+ background-position:0px -100px;
+ position:relative;
+}
+
+#signup_logo{
+display:inline-block;
+width:128px;
+height:128px;top:50px;left:50%;position:absolute;
+}
+
+#signup_logo div{
+	position:relative;
+	width:128px;height:128px;
+	position:relative;
+	background-image:url(../images/logo.png);
+	left:-50%;	display:inline-block;
+	color:#ccc;
+ font-family: "ff-din-web",Helvetica Neue,Helvetica,Arial,sans-serif;
+ font-size: 5.3em;
+ font-weight: 200;
+ line-height: 1.3em;
+ text-shadow: 0 1px 1px white;
+ letter-spacing: -1px;
+}
+
+#header div{
+	position:relative;	
+}
+
+form{
+margin:0px;padding:0px;
+
+}
+
+.submit_btn {
+	margin:5px;padding:10px;
+}
+
+#error{
+color:#990000;padding:20px;font-size:0.5em;text-align:center;
+}
+
+#header {	 
+ color:#939393;
+ font-family: "ff-din-web",Helvetica Neue,Helvetica,Arial,sans-serif;
+ font-size: 2.3em;
+ font-weight: 200;
+ line-height: 1.3em;
+ text-shadow: 0 1px 1px white;
+ letter-spacing: -1px;
+ position:absolute;top:175px;left:0px;text-align:center;
+ width:100%;
+}
+
+#header_form{
+  margin-top:10px;vertical-align:top;
+}
+
+.signup_input {
+vertical-align:top;
+
+
+width: 290px;
+height: 48px;
+padding: 0 12px 0 15px;
+color:#666;
+border: 1px solid 
+#CED0D0;
+
+-moz-border-radius-topleft: 8px;
+-webkit-border-top-left-radius: 8px;
+-ms-border-top-left-radius: 8px;
+-o-border-top-left-radius: 8px;
+border-top-left-radius: 8px;
+-moz-border-radius-bottomleft: 8px;
+-webkit-border-bottom-left-radius: 8px;
+-ms-border-bottom-left-radius: 8px;
+-o-border-bottom-left-radius: 8px;
+border-bottom-left-radius: 8px;
+
+-moz-border-radius-topright: 8px;
+-webkit-border-top-right-radius: 8px;
+-ms-border-top-right-radius: 8px;
+-o-border-top-right-radius: 8px;
+border-top-right-radius: 8px;
+-moz-border-radius-bottomright: 8px;
+-webkit-border-bottom-right-radius: 8px;
+-ms-border-bottom-right-radius: 8px;
+-o-border-bottom-right-radius: 8px;
+border-bottom-right-radius: 8px;
+
+
+-webkit-box-shadow: inset 0 1px 2px 
+rgba(0, 0, 0, 0.1);
+-moz-box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+box-shadow: inset 0 1px 2px 
+rgba(0, 0, 0, 0.1);
+-webkit-transition: all 0.3s;
+-moz-transition: all 0.3s;
+-ms-transition: all 0.3s;
+-o-transition: all 0.3s;
+transition: all 0.3s;
+outline: none;
+
+}
+
+
+.selectBox {
+-moz-border-radius-topright: 0px;
+-webkit-border-top-right-radius: 0px;
+-ms-border-top-right-radius: 0px;
+-o-border-top-right-radius: 0px;
+border-top-right-radius: 0px;
+-moz-border-radius-bottomright: 0px;
+-webkit-border-bottom-right-radius: 0px;
+-ms-border-bottom-right-radius: 0px;
+-o-border-bottom-right-radius: 0px;
+border-bottom-right-radius: 0px;
+padding-right:0px;
+}
+
