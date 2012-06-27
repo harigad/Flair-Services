@@ -14,11 +14,11 @@ $flair.likes = {
 	}
 	
 	if(this.data[sid].status===false){
-	  $("#like_div_" + sid).html("UnLike"); 
+	  $("#like_div_" + sid).html("unlike"); 
 	  this.data[sid].status=true;
 	  this.update(sid,true);
 	}else{
-	  $("#like_div_" + sid).html("Like");
+	  $("#like_div_" + sid).html("like");
 	  this.data[sid].status=false;
 	  this.update(sid,false);
 	}

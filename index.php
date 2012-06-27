@@ -1,68 +1,140 @@
-<?php
-include_once 'core/dateClass.php';
-include_once 'core/db.php';
-include_once 'core/Browser.php';
-include_once 'core/user.php';
-$db = new db();
-$browser = new browser();
-$user = new user();
-
-
-if($browser->isMobile()){
-	
-	if (isset($user->id) == true) {
-		header("Location: mobile.php");
-	}
-	
-}else{
-
-	header("Location: /app");
-
-}
-
-
-?>
-
+<!DOCTYPE html>
 <html>
-<head>
-<title>Flair</title>
-        <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; minimum-scale=1.0; user-scalable=0;" />
-<script>
- function init(){
-	window.scrollTo(0, 1);
- }
-</script> 
-
-</head>
-<body style="background-color:#eee;" onload="init();" >
-
-<div style="text-align:center;padding-top:20px;height:125%;" >
-<?php
-
-$i=rand(1,5);
-
-?>
-<img src="/images/logos/flair_<?php echo $i; ?>.png" id="logo" >
-<div>
-<a href="<?php echo $user->login(); ?>" >
-<img src="/images/Go.png" style="width:100px;border:0px;" ></a>
-</div>
-</div>
-
-
-  <div id="fb-root"></div>
-            <script>
-                window.fbAsyncInit = function() {
-                    FB.init({appId: '137205592962704', status: true, cookie: true, xfbml: true});
-                }
-                $(function(){
-                    var e = document.createElement('script');
-                    e.async = true;
-                    e.src = document.location.protocol + '//connect.facebook.net/en_US/all.js';
-
-                    document.getElementById('fb-root').appendChild(e);
-                }());
-            </script>	
-
-</body>
+ <head>
+    </head>
+ <body>
+  <button onclick="facebookWallPost()">Post</button>
+  
+        
+        <!--<script src="http://localhost:8080/target/target-script-min.js#anonymous"></script>-->
+        <div id="fb-root"></div>
+        <!-- cordova -->
+  <script src="cordova-1.7.0.js"></script>
+     <!-- cordova facebook plugin -->
+  <script src="cdv-plugin-fb-connect.js"></script>
+     <!-- facebook js sdk -->
+  <script src="facebook_js_sdk.js"></script>
+        
+  <script>
+            
+            if ((typeof cordova == 'undefined') && (typeof Cordova == 'undefined')) alert('Cordova variable does not exist. Check that you have included cordova.js correctly');
+            if (typeof CDV == 'undefined') alert('CDV variable does not exist. Check that you have included cdv-plugin-fb-connect.js correctly');
+            if (typeof FB == 'undefined') alert('FB variable does not exist. Check that you have included the Facebook JS SDK file.');
+            
+        
+            
+            /*function getSession() {
+             alert("session: " + JSON.stringify(FB.getSession()));
+             }
+             */
+            function getLoginStatus() {
+                FB.getLoginStatus(function(response) {
+                                  if (response.status == 'connected') {
+                                  alert('logged in');
+                                  } else {
+                                  alert('not logged in');
+                                  }
+                                  });
+            }
+            var friendIDs = [];
+   var fdata;
+            function me() {
+                FB.api('/me/friends', { fields: 'id, name, picture' },  function(response) {
+                       if (response.error) {
+                       alert(JSON.stringify(response.error));
+                       } else {
+                       var data = document.getElementById('data');
+        fdata=response.data;
+        console.log("fdata: "+fdata);
+                       response.data.forEach(function(item) {
+                                             var d = document.createElement('div');
+                                             d.innerHTML = "<img src="+item.picture+"/>"+item.name;
+                                             data.appendChild(d);
+                                             });
+                       }
+                       var friends = response.data;
+                       console.log(friends.length); 
+                       for (var k = 0; k < friends.length && k < 200; k++) {
+                       var friend = friends[k];
+                       var index = 1;
+                       
+                       friendIDs[k] = friend.id;
+                       //friendsInfo[k] = friend;
+                       }
+                       console.log("friendId's: "+friendIDs);
+                       });
+            }
+            
+            function logout() {
+                FB.logout(function(response) {
+                          alert('logged out');
+                          });
+            }
+            
+            function login() {
+                FB.login(
+                         function(response) {
+                         if (response.session) {
+                         alert('logged in');
+                         } else {
+                         alert('not logged in');
+                         }
+                         },
+                         { scope: "email" }
+                         );
+            }
+            
+            
+   function facebookWallPost() {
+       console.log('Debug 1');
+    var params = {
+        method: 'feed',
+        name: 'Facebook Dialogs',
+        link: 'https://developers.facebook.com/docs/reference/dialogs/',
+        picture: 'http://fbrell.com/f8.jpg',
+        caption: 'Reference Documentation',
+        description: 'Dialogs provide a simple, consistent interface for applications to interface with users.'
+                };
+    console.log(params);
+       FB.ui(params, function(obj) { console.log(obj);});
+   }
+            
+   function publishStoryFriend() {
+    randNum = Math.floor ( Math.random() * friendIDs.length ); 
+                
+    var friendID = friendIDs[randNum];
+    if (friendID == undefined){
+     alert('please click the me button to get a list of friends first');
+    }else{
+        console.log("friend id: " + friendID );
+           console.log('Opening a dialog for friendID: ', friendID);
+           var params = {
+            method: 'feed',
+               to: friendID.toString(),
+               name: 'Facebook Dialogs',
+               link: 'https://developers.facebook.com/docs/reference/dialogs/',
+               picture: 'http://fbrell.com/f8.jpg',
+               caption: 'Reference Documentation',
+               description: 'Dialogs provide a simple, consistent interface for applications to interface with users.'
+         };
+     FB.ui(params, function(obj) { console.log(obj);});
+       }
+   }
+            
+            document.addEventListener('deviceready', function() {
+                                      try {
+                                      alert('Device is ready! Make sure you set your app_id below this alert.');
+                                      FB.init({
+                                              appId : "201613399910723",
+                                              nativeInterface : CDV.FB,
+                                              useCachedDialogs : false
+                                              });
+                                      
+                                      } catch (e) {
+                                      alert(e);
+                                      }
+                                      }, false);
+            </script>
+        <div id="log"></div>
+ </body>
 </html>

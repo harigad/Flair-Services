@@ -13,7 +13,7 @@ $flair.role =  {
 
   placeObj: {},
   
-  searchResults: "<div style='font-size:1.1em;padding:15px;color:#999;' >Which Restaurant/Cafe do you work for?</div>",   
+  searchResults: "<div style='text-align:center;opacity:0.5;position:relative;top:-30px;left:8px;' ><a onclick='$flair.role.search();' ><img src='images/whichrest.png' ></a></div>",   
  
   init:function(title,id){
    $flair.go.updateHistory("role",title,id);  
@@ -71,7 +71,7 @@ $flair.role =  {
 				  that.searchCity = $('#city_input').val();
 				  
 				   for(place in places){
-				    str += "<a href='#page=role&title=new cast member&id=" + places[place].id + "' ><div style='border-bottom:1px solid #eee;padding:10px;padding-left:15px;width:280px;overflow:hidden;white-space: nowrap;' ><span style='font-size:1.2em;' >" + places[place].name + "</span><br><span style='font-size:0.8em;color:#999;'>" + places[place].vicinity + "</span></div></a>";				   
+				    str += "<a href='#page=role&title=new cast member&id=" + places[place].id + "' ><div style='border-bottom:1px solid #eee;padding:10px;padding-left:15px;width:280px;overflow:hidden;white-space: nowrap;' ><span style='font-size:1.2em;' >" + places[place].name + "</span><br><span style='color:#999;'>" + places[place].vicinity + "</span></div></a>";				   
 				   }	
 				   
 				   	that.searchResults = str;
@@ -141,7 +141,7 @@ $flair.role =  {
 			   var str="";
 			   	 str +="<div class='flair_thumb' style='margin-top:5px;margin-bottom:5px;height:auto;width:auto;display:block;background-color:#999;color:#eee;font-size:2.5em;line-height:2.5em;' >" + t.code + "</div>";
 				 
-				 str += "<div style='font-size:1.5em;color:#666;text-align:center;' >Please call <b>1-800-567-999</b> from <b>" + that.placeObj.name + "</b> and enter the above verification code.</div>";
+				 str += "<div style='font-size:1.5em;color:#666;text-align:center;' >Please call <b>(866) 291-9993</b> from <b>" + that.placeObj.name + "</b> and enter the above verification code.</div>";
 				 
 			 $flair.window.print("role_container",str);
 			 }
@@ -182,7 +182,7 @@ $flair.role =  {
 		});
 		 
   
-  
+    $flair.newFlair=true;
 	$flair.go.back();
   
   },
@@ -197,7 +197,7 @@ $flair.role =  {
 			  
 		   str += "<span style='vertical-align:top;width:190px;display:inline-block;font-size:2.5em;font-family:verdana;color:#ddd;padding:5px;white-space: nowrap;overflow:hidden;' >";
 		       str += this.placeObj.name;		   
-			   str += "<br><span style='font-size:0.5em;font-family:verdana;color:#6996F5;padding:5px;' >";
+			   str += "<br><span style='font-size:0.5em;font-family:verdana;color:#6996F5;padding:0px;white-space:normal;' >";
 		       str += this.placeObj.city;
 			   str += "</span>";			   
 		   
@@ -206,7 +206,7 @@ $flair.role =  {
 		 
 		   str +="<div id='role_container' >";
 		   
-			 str +="<div class='flair_thumb' style='margin-top:5px;margin-bottom:5px;height:auto;width:auto;display:block;background-color:#999;color:#eee;font-size:1.5em;line-height:1.5em;' >I certify that I am a cast member of this " + this.placeObj.name + "</div>";
+			 str +="<div class='flair_thumb' style='margin-top:5px;margin-bottom:5px;height:auto;width:auto;display:block;background-color:#999;color:#eee;font-size:2.0em;line-height:1.5em;' >I certify that I am a cast member of this " + this.placeObj.name + "</div>";
 		   
 		      str += "<a onclick='$flair.role.no();' ><div class='flair_thumb' style='width:130px;background-color:#770000;color:#fff;' >NO</div></a>";
 		

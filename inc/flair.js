@@ -65,7 +65,7 @@ $flair.flair = {
 				var bgColor = $flair.go.backGroundColor[colorId%2];
 				var thisPage=places[place].page;
 				if(!thisPage)thisPage="place";
-				  str += "<a onclick='$flair.flair.init(\"" + iconid + "\",\"" + places[place].id + "\",\"" + escape(places[place].name) + "\");' ><div class='flair_thumb' style='background-color:" + bgColor + ";'  >" + places[place].name + "</div></a>";
+				  str += "<a onclick='$flair.flair.init(\"" + iconid + "\",\"" + places[place].id + "\",\"" + escape(places[place].name) + "\");' ><div class='flair_thumb' style='background-color:" + bgColor + ";font-size:1.2em;'  >" + places[place].name + "</div></a>";
 				
 			}
 			

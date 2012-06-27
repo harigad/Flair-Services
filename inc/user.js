@@ -17,8 +17,7 @@ $flair.user = {
 	
 	
 	begin: function(title,id){
-		var that = this;		
-		
+		var that = this;
 			var flairs = that.flairs;
 			str = "";
 		
@@ -94,10 +93,10 @@ $flair.user = {
 		that = this;
 		if(that.noticeHolder==false){
 			var str = "";
-			if(that.user.id=="me"){
+			if(that.user.id==$flair.login.user.id){
 				str  = "Currently you have " ;
 			}else{
-				str = "Currently " + this.user.name + " has";
+				str = "Currently " + this.user.name + " has ";
 			}
 		
 			str = str + passed + " flairs accepted out of " + total + " flairs." ;
@@ -129,13 +128,13 @@ $flair.user = {
 		    strURL = "#page=place&title=" + escape(strTitle) + "&id=" + $flair.login.user.place.pid;
 		    //strURL = "#page=role&title=My Settings&id=me";
 		  }else if($flair.login.isActivationPending()){
-		   strTitle = "Verification Pending for " + $flair.login.user.place.name;		  
+		   strTitle = "<span style='line-height:40px;' >Verification Pending for " + $flair.login.user.place.name + "</span>";
 		   strURL = "#page=role&title=Verification&id=" + $flair.login.user.place.activation_pid;
 		  }else{
 		   strTitle = "<span style='line-height:40px;' >My Settings</span>";
 		   strURL = "#page=role&title=New Cast Member&id=me";
 		  }
-		str += "<a href='" + strURL + "' ><div style='border:0px dotted #ccc;border-top-width:0px;border-bottom-width:1px;vertical-align:top;padding:5px;padding-top:0px;' ><img src='images/oscar_48.png' style='heignt:15px;vertical-align:top;' >";
+		str += "<a href='" + strURL + "' ><div style='font-size:1.4em;border:0px dotted #ccc;border-top-width:0px;border-bottom-width:1px;vertical-align:top;padding:5px;padding-top:0px;' ><img src='images/oscar_48.png' style='heignt:15px;vertical-align:top;' >";
 		 //ebugger;
 		  str += strTitle ;
 		  str += "</div></a>";
@@ -188,14 +187,12 @@ $flair.user = {
 			dataType: "json",
 				success: function(user){	
 						if($flair.go.id==user.id){
-							that.users[user.id] = user;
-							that.user = user;
-							that.print();
-							
 							if($flair.login.user.id==user.id){
 							  $flair.login.user=user;
 							}
-							
+							that.users[user.id] = user;
+							that.user = user;
+							that.print();
 							$flair.newFlair=false;
 						}
 				}

@@ -18,7 +18,7 @@ a{
 }
 
 
-#logo {	
+.logo {	
 	position:absolute;
 	left:60px;top:0px;
 	width:200px;
@@ -30,7 +30,7 @@ a{
 	overflow:hidden;
 	text-align:center;
 	line-height:50px;
-	font-size:1.2em;
+	font-size:1.8em;
 	color:#fff;
 }
 
@@ -38,20 +38,21 @@ a{
 #textarea{
   	z-index:999999;
 	padding:10px;
-	background-color:#ddd;
+	background-color:#fff;
 	text-align:center;
-	height:200px;
-	text-align:left;
+	vertical-align:middle;
 	display:none;
+	
 }
 
 textarea{
-   height:180px;
+   height:100px;
    padding:5px;
-   width:200px;
-   background-color:#eee;
+   width:180px;
+   background-color:#fff;
    font-size:1.8em;
    color:#999;
+   vertical-align:middle;
 }
 
 
@@ -258,7 +259,7 @@ position:relative;top:-6px;
 
 .header_button_fullscreen{
   font-size:0.8em;vertical-align:middle;color:#eee;float:right;
-  display:inline-block;padding:5px;margin-top:12px;font-weight:bold;margin-left:0px;margin-right:0px;
+  display:inline-block;padding:5px;margin-top:4px;font-weight:bold;margin-left:0px;margin-right:0px;
   text-align:center;
      -moz-border-radius: 4px;
     -webkit-border-radius: 4px;
