@@ -2,40 +2,40 @@ $flair.home = {
 	backGroundColor: ["#dddddd","#eeeeee"],
 	
     init: function(){
-	  $flair.login.init(this.icons);
+       $flair.user.state="";
+      $flair.login.init(this.icons);
 	},
 	
 	
 	icons: function() {
-	
+
 	  	var str = "<div style='text-align:center;' >";
 		
 		  str +="<div id='notifications' ></div>";
 		
-		str += "<a onclick=\"$flair.go.refreshHomePlaces();\" ><div  class='flair_thumb' style='background-color:#eee;' >nearby</div></a>";
+		str += "<a href='#page=nearby&title=nearby&id=nearby' ><div  class='flair_thumb' style='background-color:#eee;' >nearby</div></a>";
 			str += "<a href='#page=friends&title=friends&id=friends' ><div  style='background-color:#ddd;'  class='flair_thumb' >friends</div></a>";
-			str += "<a href=\"#page=user&title=" + $flair.login.user.name + "&id=" + $flair.login.user.id + "\" ><div  style='background-color:#eee;' class='flair_thumb' >me</div></a>";
+			str += "<a href=\"#page=user&title=" + $flair.login.user.name + "&id=" + $flair.login.user.id + "&userPhoto=" + $flair.login.user.photo_big +  "\" ><div  style='background-color:#eee;' class='flair_thumb' >me</div></a>";
 	
 		
 		str +="<div onclick='$flair.flair.init(1);' class='flair_thumb' style='background-color:#ddd;background-image:url(images/icons/1.png);background-position:center center;' ></div>";
 		str +="<div onclick='$flair.flair.init(2);'  class='flair_thumb' style='background-color:#eee;background-image:url(images/icons/2.png);background-position:center center;' ></div>";
 		str +="<div onclick='$flair.flair.init(3);'  class='flair_thumb' style='background-color:#ddd;background-image:url(images/icons/3.png);background-position:center center;' ></div>";
-		str +="<div onclick='$flair.flair.init(4);'  class='flair_thumb' style='background-color:#eee;background-image:url(images/icons/10.png);background-position:center center;' ></div>";
-		str +="<div onclick='$flair.flair.init(5);'  class='flair_thumb' style='background-color:#ddd;background-image:url(images/icons/11.png);background-position:center center;' ></div>";
-		str +="<div onclick='$flair.flair.init(6);'  class='flair_thumb' style='background-color:#eee;background-image:url(images/icons/seafood.png);background-position:center center;' ></div>";
+		str +="<div onclick='$flair.flair.init(4);'  class='flair_thumb' style='background-color:#eee;background-image:url(images/icons/2.png);background-position:center center;' ></div>";
+		str +="<div onclick='$flair.flair.init(5);'  class='flair_thumb' style='background-color:#ddd;background-image:url(images/icons/3.png);background-position:center center;' ></div>";
+		str +="<div onclick='$flair.flair.init(6);'  class='flair_thumb' style='background-color:#eee;background-image:url(images/icons/1.png);background-position:center center;' ></div>";
 		str +="<div onclick='$flair.flair.init(7);'  class='flair_thumb' style='background-color:#ddd;background-image:url(images/icons/3.png);background-position:center center;' ></div>";
-		str +="<div onclick='$flair.flair.init(8);'  class='flair_thumb' style='background-color:#eee;background-image:url(images/icons/2.png);background-position:center center;' ></div>";
-		str +="<div onclick='$flair.flair.init(9);'  class='flair_thumb' style='background-color:#ddd;background-image:url(images/icons/1.png);background-position:center center;' ></div>";
+		str +="<div onclick='$flair.flair.init(8);'  class='flair_thumb' style='background-color:#eee;background-image:url(images/icons/1.png);background-position:center center;' ></div>";
+		str +="<div onclick='$flair.flair.init(9);'  class='flair_thumb' style='background-color:#ddd;background-image:url(images/icons/2.png);background-position:center center;' ></div>";
 		
 		str += "</div>";
 		
-			
+			str = str + "<div style='padding:10px;text-align:center;'>Flair(beta) developed by ThemeSoft, Inc</div>";
+		
 		$flair.go.updateHistory("home","Flair","home");		
 		$flair.window.printPage(str);
 		
 		$flair.notifications.init();
-	
-	
 	
 	},
 	

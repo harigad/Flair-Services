@@ -10,7 +10,7 @@ $flair.go = {
 		this.status=true;
 
 		if(query=="") {
-			this.home();
+			this.load("home");
 		}else{		
 				var myVars=query.split("&");
 				pageArr=myVars[0].split("=");page=pageArr[1];
@@ -18,6 +18,21 @@ $flair.go = {
 				pageArr=myVars[2].split("=");id=pageArr[1];
 				this.load(page,unescape(title),id);
 		}
+	
+	},
+	
+	request: function(name){
+		var currentURL = document.location.hash;
+		var query = currentURL.substring(1);
+		var myStringArray=query.split("&");
+		for(var i=0;i<myStringArray.length;i++) {	
+			var myVarArray = myStringArray[i].split("=");
+			if(myVarArray[0]==name){
+				return unescape(myVarArray[1]);
+			}
+		}
+	
+		return null;	
 	},
 	
 	updateHistory: function(page,title,id){
@@ -73,7 +88,9 @@ $flair.go = {
 	
 	placeObj: {},
 	
-	place: function(title,id,passedPlaceObj) {	
+	place: function(title,id,passedPlaceObj) {
+		this.updateHistory("place",title,id);		
+		
 			var places = $flair.location.places;		
 			var thisPlace;			
 		
@@ -83,7 +100,10 @@ $flair.go = {
 		}else if(passedPlaceObj){
 			this.local=false;
 			this.placeObj = passedPlaceObj; 
-		}else{	
+		}else if($flair.location.places[id]){
+			this.placeObj = $flair.location.places[id];	
+		      //do nothing		
+		}else {	
 				this.local=false;
 				this.updateHistory("place",title,id);		
 				$flair.window.printPage('<div class="loading" style="height:100px;background-position:center;background-repeat:no-repeat;" ></div>',true);
@@ -91,32 +111,47 @@ $flair.go = {
 				return;
 		}
 		
-		var str="<div style='text-align:center;vertical-align:top;' >";						
+		$flair.location.places[id]=this.placeObj;
+		this.printPlace();
 		
-		str=str+"<div  style=\"padding-top:1px;text-align:center;\" >";
+		},
+		
+		
+		printPlace: function(){
+		debugger;
+			if(this.placeObj.id !== $flair.go.request("id")){
+				return;
+			}
+		
+		var str="<div style='text-align:center;vertical-align:top;position:relative;top:-10px;' >";		
+		
+		str += "<div style='padding:10px;background-color:#999;color:#fff;text-align:left;font-size:1.2em;padding-right:80px;' >" + this.placeObj.city + "</div>";				
+		
+		//	str=str+"<div  style=\"padding-top:1px;text-align:center;\" >";
 				
-				str += "<a href='#page=map&title=" + escape(title) + "&id=" + (id) + "' ><div class='flair_thumb' style='background-color:" + this.backGroundColor[1] + ";' >map</div></a>";
+		//		str += "<a href='#page=map&title=" + escape(title) + "&id=" + (id) + "' ><div class='flair_thumb' style='background-color:" + this.backGroundColor[1] + ";' >map</div></a>";
 			
 			
-				str += "<a href='#page=cast&title=Cast&id=" + (id) + "' ><div class='flair_thumb' style='background-color:" + this.backGroundColor[1] +";' id='place_call' >cast</div></a>";
+		//	str += "<a href='#page=cast&title=Cast&id=" + (id) + "' ><div class='flair_thumb' style='background-color:" + this.backGroundColor[1] +";' id='place_call' >cast</div></a>";
 		
 			
-				str += "<a onclick='$flair.go.call();' ><div class='flair_thumb' style='background-color:" + this.backGroundColor[1] +";' id='place_call' >call</div></a>";
+		//str += "<a onclick='$flair.go.call();' ><div class='flair_thumb' style='background-color:" + this.backGroundColor[1] +";' id='place_call' >call</div></a>";
 		
-			//str+="<div class='flair_thumb' id='map_canvas' style='width:180px;height:80px;' ></div>";
+		str+="<div  id='map_canvas' style='height:150px;' ></div>";
 		
 			str = str + "<div id=\"flairs_holder\"  >";
 			str=str + "</div>";			
 		
 		str += "</div>";	
 	
-		this.updateHistory("place",title,id);		
 		$flair.window.printPage(str);	
 		
 		  if(this.placeObj){
 			this.placeFlairs(this.placeObj['stickers']);
 			}
-	//	$flair.timeout = setTimeout("$flair.go.placeMap();",500);
+		$flair.timeout = setTimeout("$flair.go.placeMap();",500);
+	
+
        
 	},
 	
@@ -176,18 +211,20 @@ $flair.go = {
 	},
 	
 	placeFlairs: function(flairsArray) {		
-		
+	
 		if(!flairsArray){
 		  flairsArray=[];
 		}
 		
-		var str = "";	
+		var str = "<div id='flairs_holder' style='text-align:center;' >";		
+			
 		this.preLoadImages=[];
 		for(var i=0;i<flairsArray.length;i++) {
 			str += this.printFlairList(flairsArray[i],i,flairsArray.length);			
 		}
 		
-		$flair.window.print("flairs_holder",str);		
+		str += "</div>";
+		$flair.window.print("user_content_holder",str);		
 		this.loadImages();
 		
 	},
@@ -228,7 +265,19 @@ $flair.go = {
 	
 	
 	load: function(page,title,id) {	
-
+	
+		  this.page = page;
+		  
+		   $flair.footer.init(page);
+	
+	
+		  if(page=="home"){
+			this.home();
+			return;
+		  }
+		  
+	
+		  
 		  if(page=="local"){
 			this.local(title,id);
 			return;
@@ -276,6 +325,11 @@ $flair.go = {
 		  
 		    if(page=="settings"){		   
 			$flair.settings.init(title,id);
+			return;
+		  }
+		  
+		  	if(page=="nearby"){		   
+			$flair.nearby.init(title,id);
 			return;
 		  }
 		  

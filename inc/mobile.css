@@ -4,6 +4,7 @@ root {
 body{
     margin:0px;text-align:center;
 	font-family:'PT Sans',sans-serif;font-size:62.5%;;color:#444;
+	backgrounds-image:url(http://us.123rf.com/400wm/400/400/iloveotto/iloveotto1002/iloveotto100200174/6607470-background--rusty-old-fashioned-with-space-for-your-design.jpg);
 	
 }
 
@@ -55,9 +56,17 @@ textarea{
    vertical-align:middle;
 }
 
+.role_name{
+	padding:10px;
+	
+
+
+
+}
+
 
 .headerBg{
-    width:100%;
+	width:100%;
     text-align:center;
     position:fixed;top:0px;height:50px;
 	
@@ -66,6 +75,31 @@ textarea{
 	background-repeat:repeat-x;
 	background-color:#6996F5;
 	background-image:url(/images/topBg.png);
+}
+
+
+.footer{
+	width:100%;
+    display:block;
+	padding:5px;
+    text-align:left;
+    position:fixed;bottom:0px;height:40px;	
+	z-index:9999;	
+	border-bottom:1px outset #6996F5; 
+	background-repeat:repeat-x;
+	background-color:#6996F5;
+	background-image:url(/images/topBg.png);
+}
+
+.footer_content_tab_container{
+	display:inline-block;
+	width:153px;
+	height:40px;
+}
+
+.footer_content_tab{
+	height:100%;
+	background-color:#fff;
 }
 
 

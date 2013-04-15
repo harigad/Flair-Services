@@ -9,22 +9,29 @@
 		$thisUser = $db->selectRow("select * from user where id='{$userid}'");	
 		
 					$flairs = buildStickers(-1,$userid);
+						$userJSON['uid'] = $userid;
 						$userJSON['id'] = $userid;
 						$userJSON['name'] = $thisUser['name'];
 						
 					if($myProfile){
 					
-						  $role=$db->selectRow("Select role.role,place.name,place.pid from role inner join place on role.pid=place.pid where uid={$user->id} limit 1");
+						  $role=$db->selectRow("Select role.role,place.name,place.pid,lat,lng from role inner join place on role.pid=place.pid where uid={$user->id} limit 1");
 						  if($role){
 							$place['pid']=$role['pid'];
 							$place['name']=$role['name'];
-							$place['role']=$role['role'];	
+							$place['role']=$role['role'];
+							$place['lat']=$act['lat'];
+							$place['lng']=$act['lng'];
 							$userJSON['place']=$place;					
 						  }else{
-						    $act=$db->selectRow("select place.pid, place.name from place inner join activation on place.pid=activation.pid where activation.uid={$user->id} and expired=0");						   
+						    $act=$db->selectRow("select place.pid, place.name, place.vicinity, code,lat,lng from place inner join activation on place.pid=activation.pid where activation.uid={$user->id} and expired=0");						   
 						   if($act){
-						     $place['activation_pid']=$act['pid'];
-							 $place['name']=$act['name'];						
+						     $place['pid']=$act['pid'];
+							 $place['name']=$act['name'];
+							 $place['vicinity']=$act['vicinity'];
+							 $place['code']=$act['code'];
+							 $place['lat']=$act['lat'];
+							 $place['lng']=$act['lng'];
 							 $userJSON['place']=$place;	
 
 						   }
@@ -33,17 +40,26 @@
 						
 						
 					}else{
-						
+						  $role=$db->selectRow("Select role.role,place.name,place.pid,lat,lng from role inner join place on role.pid=place.pid where uid={$userid} limit 1");
+						  if($role){
+							$place['pid']=$role['pid'];
+							$place['name']=$role['name'];
+							$place['role']=$role['role'];
+							$place['lat']=$act['lat'];
+							$place['lng']=$act['lng'];
+							$userJSON['place']=$place;
+							}
 					}
 					
+					$userJSON['photo'] = $thisUser['photo'];
 					$userJSON['photo_big'] = $thisUser['photo_big'];
-					$userJSON['flairs']=$flairs;
-					
-						$flair_count= $db->selectRow("select count(id) as flair_count from sticker where user='{$userid}' and status=1");					
-						$place_count= $db->selectRow("select count(id) as flair_count from sticker_temp where user='{$userid}' and status is NULL");
-						
-					$userJSON['flair_count'] = $flair_count["flair_count"];		
-					$userJSON['place_count'] = $place_count["flair_count"] + $flair_count["flair_count"];				
+					$userJSON['feed']=$flairs;
+					$userJSON['status'] = true;
+						//$flair_count= $db->selectRow("select count(id) as flair_count from sticker where user='{$userid}' and status=1");					
+						//$place_count= $db->selectRow("select count(id) as flair_count from sticker_temp where user='{$userid}' and status is NULL");
+						//$userJSON['flair_count'] = $flair_count["flair_count"];		
+						//$userJSON['place_count'] = $place_count["flair_count"] + $flair_count["flair_count"];
+										
 					echo json_encode($userJSON);
 					
 					

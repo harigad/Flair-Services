@@ -58,6 +58,12 @@ text-wrap:none;
 	background-repeat:no-repeat;
 }
 
+.role_border{
+	width:auto;display:block;border:0px solid #eee;border-bottom-width:1px;padding-left:120px;text-align:left;
+	}
+	
+
+
 .flair_thumb_long {
   
 	position:relative;

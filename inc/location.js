@@ -48,6 +48,7 @@ $flair.location = {
 		});
 	},
 	
+	
 	loadPlaces: function (dontPrint) {			
 		that = this;	
 		url="http://flair.me/search.php";
@@ -56,10 +57,10 @@ $flair.location = {
 		data+="&lat=" + $flair.lat;
 		data+="&lng=" + $flair.lng;
 		
-		
 			if($flair.ajaxRequest){
 				$flair.ajaxRequest.abort();
 			}
+	
 			$flair.ajaxRequest=$.ajax({
 			type: "POST",
 			url: url,

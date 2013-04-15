@@ -32,7 +32,7 @@ if (isset($noun) && $noun!=-1 && $noun!="-1"){
              if ($place['phone'] == "" || isset($place['phone']) == false) {
 
                 $url = "https://maps.googleapis.com/maps/api/place/details/json?";
-                $par = "&key=AIzaSyAZjPLQEq5tdllUCd89gV1_XFBHdjpmmEI";
+                $par = "&key=AIzaSyAqYsZa6MJ97_Q-8NlafqfvIAki3W8pRQU";
                 $par.= "&sensor=true";
                 $par.= "&reference={$place['gref']}";
                 $results = file_get_contents("{$url}{$par}");

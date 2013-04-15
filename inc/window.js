@@ -79,6 +79,8 @@ $flair.window = {
 	},	
 
 	printPage: function(str,noFade) {
+		
+	
 		//Hide
 		$('#page_content').hide();
 		

@@ -13,8 +13,6 @@ $flair.placeSearch = {
   
   process: function(){
  
- 
-  	
 		that = this;	
 		url="http://flair.me/search.php";
 		var data="&type=search";

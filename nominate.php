@@ -10,49 +10,50 @@ $db = new db();
 $browser = new browser();
 $user = new user();
 
-
 if($user->loggedin != true) {
   return;
 }
 
-$icon = $_POST['iconid'];
-$verb = $_POST['verb'];
-$noun = $_POST['noun'];
-$verbName = $_POST['verbName'];
-$verbType = $_POST['verbType'];
-$recipient = $_POST['people'];
-$recipientName = $_POST['peopleName'];
+$place = $_POST['place'];
 
+$flair = $_POST['flair'];
+$adjective = $_POST['adjective'];
+$food = trim($_POST['food']);
+$recipientName = $_POST['recipientName'];
+$recipient = "";
 
-if (isset($verb) && isset($noun) && isset($recipient) && $noun!="" && $verb!="" && ($recipient!="" || $recipientName!="") ) {
+$recipient = _getRecipient($recipientName,$place);
+
+if (isset($flair) && isset($adjective) && isset($food) && ($recipient!="") ) {
     $dt = new dateObj();
 	
     $newData['user'] = $user->id;
+			
+	$newData['flair'] = $flair;	
+    $newData['adjective'] = $adjective;	
+    $newData['food'] = _get_food_id($food);
 	
-	$newData['icon'] = $icon;
-	
-    $newData['noun'] = $noun;
-	
-    $newData['verb'] = $verb;
-	$newData['verbName'] = $verbName;
+	$newData['place'] = $place;
 	
 	$newData['recipient'] = $recipient;
-	$newData['recipientName'] = $recipientName;
 	
     $newData['created'] = $dt->mysqlDate();
-    $newData['updated'] = $dt->mysqlDate();
 	
-    $sid = $db->insert('sticker_temp', $newData);
+    $sid = $db->insert('feed', $newData);
 	
-	//Update Place address info---------------------------------------------------------------------
-		$place=$db->selectRow("select * from place where pid='{$noun}'");
-	        if ($place['address'] == "" || isset($place['address']) == false) {
+	_update_recipient_photo($recipient,$place);
+	
+/*	//Update Place address info---------------------------------------------------------------------
+		$placeObj=$db->selectRow("select * from place where pid='{$place}'");
+	        if ($placeObj['address'] === "" || isset($placeObj['address']) === false) {
 
                 $url = "https://maps.googleapis.com/maps/api/place/details/json?";
-                $par = "&key=AIzaSyAZjPLQEq5tdllUCd89gV1_XFBHdjpmmEI";
+                $par = "&key=AIzaSyAqYsZa6MJ97_Q-8NlafqfvIAki3W8pRQU";
                 $par.= "&sensor=true";
-                $par.= "&reference={$place['gref']}";
+                $par.= "&reference={$placeObj['gref']}";
                 $results = file_get_contents("{$url}{$par}");
+				//echo "{$url}{$par}";
+				//echo $results;
                 $r = json_decode($results);
                 $updateData['phone'] = $r->result->formatted_phone_number;
                 $updateData['address'] = $r->result->formatted_address;
@@ -75,30 +76,98 @@ if (isset($verb) && isset($noun) && isset($recipient) && $noun!="" && $verb!="" 
 					}
 				}
 				
-                $db->update("place",$updateData,"pid = '{$noun}'");
+                $db->update("place",$updateData,"pid = '{$place}'");
                 $phone = $r->result->formatted_phone_number;
                 $address = $r->result->formatted_address;
         } 
 	//---------------------------------------------------------------------------------
-	
-		$obj->pid = $noun;	
-		$obj->stickers = buildStickers($noun);;						
-			
-				$foodsData = $db->selectRows("select distinct food.fid as fid,food.name,food.type from food inner join sticker on food.fid = sticker.verb and sticker.noun={$noun}");
-				$foods = array();			
-					while($food = mysql_fetch_array($foodsData)) {							
-						array_push($foods,$food);
-					}			
-				
-				$obj->foods = $foods;						
-				$obj->status = 1;
+*/	
+		$obj->pid = $place;	
+		$obj->stickers = buildStickers(-1,$user->id);
+								
+		$obj->status = 1;
 }else{
     $obj->status = 0;
 	$obj->title = "";
     $obj->message = "Sorry! unexpected error!";
 }
 
-
-
 echo json_encode($obj);
+
+function _get_food_id($food){
+	global $db;
+		
+	$fid_obj = $db->selectRow("select fid from food where name = '{$food}'");
+	if($fid_obj){
+		return $fid_obj[0];
+	}else{
+		$mysqldate = new dateObj();
+		$_data['name'] = $food;
+		$_data['created'] = $mysqldate->mysqlDate();
+		$fid = 	$db->insert("food",$_data);
+		return $fid;		
+	}
+	
+}
+
+function _getRecipient($recipientName,$pid){
+	global $db;
+	$recp_Obj = $db->selectRow("select role.uid from role 
+	inner join user on role.uid = user.id 
+	where role.pid='{$pid}' and user.name='{$recipientName}'");
+	
+	if($recp_Obj){
+		return $recp_Obj[0];
+	}else{
+		$mysqldate = new dateObj();
+		$_data['name'] = $recipientName;
+		$_data['created'] = $mysqldate->mysqlDate();
+		$uid = $db->insert("user",$_data);
+		
+		$role_data['uid'] = $uid;
+		$role_data['pid'] = $pid;
+		$rid = $db->insert("role",$role_data);
+		
+		return $uid;
+	}
+}
+
+function _update_recipient_photo($recipient,$pid){
+	global $db;
+	$_roles = array();
+	$_roles[0] = "";
+	$_roles[1] = "The Ninja";
+	$_roles[2] = "The Angel";
+	$_roles[3] = "The Warrior";
+	
+	$_roles[4] = "The Wicked";
+	$_roles[5] = "The Funny One";
+	$_roles[6] = "The Pirate";
+	
+	$_roles[7] = "The Prince";
+	$_roles[8] = "The Warrior";
+    $_roles[9] = "The Princess";
+
+	$recp_obj = $db->selectRow("select fbid from user where id='{$recipient}'");
+	if($recp_obj){
+		if($recp_obj[0]>0){
+			//User has registered with facebook;
+		}else{
+		  $count_obj = $db->selectRow("select count(fid) as ct,flair from feed 
+		  WHERE recipient = '{$recipient}' 
+		  group by flair order by ct desc limit 1");
+		  
+		  if($count_obj){
+		  	$icon = $count_obj[1];
+		  	$_data_photo['photo'] = "images/flairs/100/" . $icon . ".png";
+			$_data_photo['photo_big'] = "images/flairs/300/" . $icon . ".png";
+			$db->update("user",$_data_photo,"id = '{$recipient}'");
+		    
+			$_role_data['role'] = $_roles[$icon];
+			$db->update("role",$_role_data,"uid = '{$recipient}' and pid = '{$pid}'");
+			}	
+		}
+	}
+}
+
 ?>

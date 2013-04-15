@@ -19,6 +19,9 @@ $search = $_POST['search'];
 $type = $_POST['type'];
 $id = $_POST['id'];
 
+
+//echo "---------------" . $type;
+//return;
 //log this page
 $dt=new dateObj();
 $user_log['user']=$user->id;
@@ -28,8 +31,19 @@ $user_log['idnumber']=$id;
 $user_log['created']=$dt->mysqlDate();
 $db->insert("user_log",$user_log);
 
+if($type=="_data" ){
 
-if($type=="user" ){
+	 include_once 'functions/_data.php'; 
+
+}else if($type=="like" ){
+
+	 include_once 'functions/like.php'; 
+
+}else if($type=="comments" ){
+
+	 include_once 'functions/comments.php'; 
+
+}else if($type=="user" ){
 
 	 include_once 'functions/user.php'; 
 
@@ -65,6 +79,10 @@ if($type=="user" ){
 
 		 include_once 'functions/friends.php';
 
+}else if ($type == "nearby"){
+
+		 include_once 'functions/nearby.php';
+
 }else if ($type == "role"){
 
 		 include_once 'functions/role.php';
@@ -89,6 +107,9 @@ if($type=="user" ){
 }else if($type == "local"){
 	$stickers = buildStickers(0,0,"",true);
     echo json_encode($stickers);
+}else if($type == "updateRole"){
+	$data['role']=$_POST['role'];
+	$db->update("role",$data,"uid={$user->id}");
 }
 
 

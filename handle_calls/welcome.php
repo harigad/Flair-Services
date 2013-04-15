@@ -1,4 +1,6 @@
 <?php
+include_once 'Sig_validation.php';
+if($_GET['id']=="123456789" && $calculated_signature == $expected_signature){
 include_once 'caller_log.php';
 logme("welcome","","");
 
@@ -23,4 +25,10 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 <Say>Please call back from a valid land line.</Say>
 <Say>Bye Bye</Say>
 </Response>
-<?php } ?>
+<?php } 
+}
+else
+{
+	echo "Requested page is Secured.";
+}
+?>

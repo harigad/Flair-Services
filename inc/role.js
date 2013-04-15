@@ -15,8 +15,8 @@ $flair.role =  {
   
   searchResults: "<div style='text-align:center;opacity:0.5;position:relative;top:-30px;left:8px;' ><a onclick='$flair.role.search();' ><img src='images/whichrest.png' ></a></div>",   
  
-  init:function(title,id){
-   $flair.go.updateHistory("role",title,id);  
+  init:function(title,id){     
+  $flair.go.updateHistory("role",title,id);
    $flair.login.init(this.begin(title,id));
   },  
 
@@ -31,12 +31,10 @@ $flair.role =  {
 	  str += this.searchResults;
 	  
 	  str + "</div>";
-	  $flair.window.printPage(str);
+	  $flair.window.print('page_content',str);
 	  
 	  $('#name_input').val(this.searchName);
 	  $('#city_input').val(this.searchCity);
-	  
-	
 	  
   },
   
@@ -53,7 +51,8 @@ $flair.role =  {
 		data+="&search=" + $('#name_input').val();
 		data+="&searchMode=place";
 		data+="&city=" + $('#city_input').val();
-				
+		//data+="&lat=" + $flair.lat;
+		//data+="&lng=" + $flair.lng;		
 			if($flair.ajaxRequest){
 				$flair.ajaxRequest.abort();
 			}
@@ -101,7 +100,7 @@ $flair.role =  {
 			dataType: "json",
 				success: function(place){
 				    that.placeObj=place;
-					that.print();
+					that.checkAndPrint();
 				}
 			});		
 	},
@@ -244,18 +243,50 @@ $flair.role =  {
 		 str += "</div>";
 		 $flair.window.printPage(str);
 	 
-	 
-	 
+  },
+
+  updateRole: function(role){
+  	$flair.login.updateRole(role);   
+  	$flair.go.back();
   },
 
   printDetails:function(){
-     if($flair.login.getRole()){
-	      
-	 }else{
-	       this.changeRole();
-	 
+    var roles=["The Hero","The Villain","The Comedian","The Director","The Producer"];
+  
+     if($flair.login.isCastMember()){
+       var str="";
+       
+	   str += "<div style='padding:10px;position:relative;top:-10px;background-color:#999;color:#fff;text-align:center;font-size:1.2em;' >Please select your Role ( JOB TITLE ) from below.</div>";
+       
+       str += "<div style='padding-bottom:100px;position:relative;top:-10px;' >";
+  
+  			for(i=0;i<roles.length;i++){
+  				var thisStyle;
+  				thisStyle="color:#6996F5;";
+  				
+  				if($flair.login.getRole()==roles[i]){
+  				  thisStyle = "background-color:#eee;color:#999;";
+  				}
+  				
+       			str += "<a onclick='$flair.role.updateRole(\"" + roles[i] + "\");' ><div class='flair_thumb left_thumb role_border' style='" + thisStyle + "' >" + roles[i] + "</div></a>";
+       		}       		
+       		
+       str += "</div>";
+       
+       $flair.window.printPage(str);
+	  
 	 }
   },  
+    
+    
+  checkAndPrint: function(){  
+  	if($flair.login.isCastMember()){
+		this.print();
+  	}else{
+  		this.print();
+  	}
+  },  
+    
     
   begin: function(title,id){
 	var placeObj;
@@ -274,7 +305,7 @@ $flair.role =  {
 	  if(this.placeObj.id!=id){
 		this.placeObj=$flair.go.placeObj;
 	  }
-	  this.print();
+	  this.checkAndPrint();
 	}else{
 	     var str="";
 	    str += "<div style='margin-left:8px;margin-right:8px;' >";

@@ -13,6 +13,7 @@ $flair.login = {
 			   }else{
 			   
 				 try{ callBack();	}catch(e){}	
+				 
 			   }
 			}else{		
 			 that.show();
@@ -96,7 +97,7 @@ $flair.login = {
      );
   },  
      
-  isCastMember: function(){
+  isCastMember: function(uid){
 	 if(this.getPid()){
 	   return true;
 	 }else{
@@ -120,6 +121,30 @@ $flair.login = {
 		return false;
 	}  
   },
+  
+  updateRole: function(role){
+  	this.user.place.role=role;  
+  	
+  		url="http://flair.me/search.php";
+		var data="&type=updateRole&role=" + role;		
+	
+		if($flair.login.accessToken){
+		  data+="&accessToken=" + $flair.login.accessToken;	
+		}	
+		
+			$flair.meRequest=$.ajax({
+			type: "POST",
+			url: url,
+			data:data,
+			dataType: "json",
+				success: function(user){	
+				}
+				
+				});
+  	
+  	
+  	
+  },  
   
   getPid: function(){
    try{

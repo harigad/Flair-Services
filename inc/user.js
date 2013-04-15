@@ -4,45 +4,96 @@ $flair.user = {
 	user: {},
 	noticeHolder: false,
 	
-	
-	
-	
-	
-	init: function(title,id) {	
-	
-		$flair.go.updateHistory("user",title,id);
-		
-		$flair.login.init(this.begin(title,id));
+	me: function() {	
+		this.state="";
+		this.begin(this.user.name,this.user.id);
 	},
 	
+	init: function(title,id) {	
+		$flair.go.updateHistory("user",title,id);
+		$flair.login.init(this.begin(title,id));
+	},	
+	
+	getRecievedFlairs: function() {
+		return [];
+	},	
+	
+	
+	 isCastMember: function(uid){
+	 if(this.getPid()){
+	   return true;
+	 }else{
+	  return false;
+	  }
+  	},
+  	
+  getPid: function(){
+   try{
+   		return this.user.place.pid;
+   }catch(e){
+   		return false;
+   }  
+  },
+	
+	rec: function() {
+		 this.state="rec";
+		 if($flair.login.isCastMember()!==true){	
+			$flair.role.showSearch();
+			return;
+		 }		
+		  
+		 str += "<div id='user_content_holder' >";
+					
+		str += "</div>";
+		  
+		 $flair.window.printPage(str);	
+		 var rec=this.getRecievedFlairs();
+		 if(rec.length>0){
+		 	$flair.go.placeFlairs(rec);
+		 }else{
+		   		var msg="<div style='text-align:center;font-size:2.0em;color:#999;padding-top:40px;' >No Flairs to Show You.</div>";
+		 }
+		 $flair.window.print('user_content_holder',msg);
+		 
+	},
 	
 	begin: function(title,id){
 		var that = this;
+
 			var flairs = that.flairs;
 			str = "";
+		
+			$flair.window.printPage('<div style="vertical-align:top;" ><div style="background-color:#eee;vertical-align:top;text-align:left;margin-left:0px;margin-bottom:0px;display:inline-block;position:relative;top:-10px;" ><img src="' + $flair.go.request("userPhoto") + '" style="width:320px;"  ></div><div id="left_user_content_holder_main" ><div class="loading" style="height:40px;background-position:center;background-repeat:no-repeat;" ></div></div>',true);
+			 
 		
 			if(that.users[id] && !$flair.newFlair){		
 			  that.user = that.users[id];	
 			  that.print();
 			}else if(id == "null"){
+			  user = new Object();
+			  user.id=id;
+			  user.name=title;
+			  user.place = new Object();
+			  user.place.pid=$flair.go.request("pid");
+			  user.place.name=$flair.go.request("placename");
+			  user.place.role="";
+			  that.user = user;
+			
 			  that.printNonUser(title);
 			}else {
-			  $flair.window.printPage('<div class="loading" style="height:100px;background-position:center;background-repeat:no-repeat;" ></div>',true);
 			  that.loadUser(id);return;
 			}
 	
-	},
-	
+	},	
 	
 	friends: function(title,id,loggedIn) {
 	  $flair.go.updateHistory("friends",title,id);
 	  $flair.login.init(this.friendsBegin(title,id));
 	 },
-	 
-	 
+	 	 
 	 friendsBegin: function(title,id){
 	  
-	  $flair.window.printPage('<div class="loading" id="flairs_holder" style="height:100px;background-position:center;background-repeat:no-repeat;" ></div>',true);
+	  $flair.window.printPage('<div class="loading" id="user_content_holder" style="height:100px;background-position:center;background-repeat:no-repeat;" ></div>',true);
 	 
 	     url="search.php";
 		 data="&search=" + title;
@@ -81,8 +132,10 @@ $flair.user = {
 	printNonUser: function(title) {
 		var str="";
 		                                                          
-		str += "<div style='vertical-align:top;' ><div style='vertical-align:top;text-align:left;margin-left:8px;margin-bottom:8px;display:inline-block;' ><img src='/images/icons/offline-user-icon.png' style='width:100px;'  ></div>"; 
-		str += "<a href='' ><div class='flair_thumb' style='background-color:transparent;font-size:30px;font-weight:bold;line-height:20px;color:#6996F5;' >0<hr style='margin-top:10px;margin-bottom:10px;background-color:#6996F5;color:#6996F5;' />0</div></a></div>";
+		str += "<div style='vertical-align:top;' ><div style='vertical-align:top;text-align:left;position:relative;top:-10px;height:150px;background-color:#ccc;' ></div>"; 
+		
+		str += this.printRole();
+		
 		str += "<div id='flairs_holder' style='text-align:center;' >";		
 		str += "</div>";		
 		$flair.window.printPage(str);;
@@ -108,45 +161,74 @@ $flair.user = {
 		}
 	},
 	
+	printRole: function(){
+
+	var str="";
+	var strTitle = "";
+	var strURL = "";
+	
+	var extra ="";
+	
+	 	  if(this.isCastMember()===true){
+		    strTitle = "<span style='font-size:1.4em;white-space:nowrap;' >" + this.user.place.name + "</span>";
+		    strTitle = strTitle + "<br><span style='color:#999;white-space:nowrap;' >" + this.user.place.role + "</span>";
+		    strURL = "#page=place&title=" + escape(strTitle) + "&id=" + this.user.place.pid;
+		    if(this.user.id===$flair.login.user.id){
+		    
+		    	extra = "<a href='#page=role&title=My Title (Role)&id=me' ><div style='background-color:#eee;position:absolute;right:0px;top:0px;height:50px;width:100px;background-image:url(images/settings2.png);background-position:center center;background-repeat:no-repeat;' ></div></a>";
+		    
+		   		//	 strURL = "";
+		    }
+		    
+		  }else if($flair.login.isActivationPending()){
+		   strTitle = "<span style='line-height:40px;' >Verification Pending for " + $flair.login.user.place.name + "</span>";
+		   strURL = "#page=role&title=Verification&id=" + $flair.login.user.place.activation_pid;
+		  }else if($flair.login.user.id===this.user.id){
+		   strTitle = "<span style='line-height:40px;' >My Settings</span>";
+		   strURL = "#page=role&title=New Cast Member&id=me";
+		  }
+		  
+		  
+		 if(strTitle && strURL){
+		 str += "<a href='" + strURL + "' ><div style='background-color:#eee;position:relative;top:-10px;font-size:1.4em;border:0px;vertical-align:top;padding:5px;' ><img src='images/oscar_48.png' style='float:left;heignt:15px;vertical-align:top;' >";
+		 str += strTitle ;
+		 str += extra + "<div style='clear:both;' ></div></div></a>";
+		}else{
+			str = "";			
+		}
+		return str;	
+	},
+	
+	
 	print: function(){
+		
 		if($flair.go.id!=this.user.id){
 			return;
 		}
 		
 		var str="";
 		                                                          
-		str += "<div style='vertical-align:top;' ><div style='vertical-align:top;text-align:left;margin-left:8px;margin-bottom:8px;display:inline-block;' ><img src='" + this.user.photo_big + "' style='height:100px;'  ></div>"; 
-		str += "<a onclick='$flair.user.notice(" + this.user.flair_count  + "," + this.user.place_count + ");' ><div class='flair_thumb' style='background-color:transparent;font-size:30px;font-weight:bold;line-height:20px;color:#6996F5;' >" + this.user.flair_count  + "<hr style='margin-top:10px;margin-bottom:10px;background-color:#6996F5;color:#6996F5;' />" + this.user.place_count + "</div></a></div>";
-		str += "<div id='notice_holder' style='display:none;text-align:left;padding:10px;margin-left:8px;margin-right:8px;color:#6996F5;' ></div>";		
+		str += this.printRole();
 		
+		str += "<div id='user_content_holder' >";
+					
+		str += "</div>";
 		
-		if($flair.login.user.id==this.user.id){	
+		$flair.window.print("left_user_content_holder_main",str);
 		
-			
-		 if($flair.login.isCastMember()===true){
-		    strTitle = $flair.login.user.place.name;
-		    strURL = "#page=place&title=" + escape(strTitle) + "&id=" + $flair.login.user.place.pid;
-		    //strURL = "#page=role&title=My Settings&id=me";
-		  }else if($flair.login.isActivationPending()){
-		   strTitle = "<span style='line-height:40px;' >Verification Pending for " + $flair.login.user.place.name + "</span>";
-		   strURL = "#page=role&title=Verification&id=" + $flair.login.user.place.activation_pid;
-		  }else{
-		   strTitle = "<span style='line-height:40px;' >My Settings</span>";
-		   strURL = "#page=role&title=New Cast Member&id=me";
-		  }
-		str += "<a href='" + strURL + "' ><div style='font-size:1.4em;border:0px dotted #ccc;border-top-width:0px;border-bottom-width:1px;vertical-align:top;padding:5px;padding-top:0px;' ><img src='images/oscar_48.png' style='heignt:15px;vertical-align:top;' >";
-		 //ebugger;
-		  str += strTitle ;
-		  str += "</div></a>";
-		}else{
-		
-		
+		if(this.state==="rec"){
+			this.rec();
+		}else{			
+			$flair.go.placeFlairs(this.user.flairs);
 		}
 		
-		str += "<div id='flairs_holder' style='text-align:center;' >";		
-		str += "</div>";		
-		$flair.window.printPage(str);
-		$flair.go.placeFlairs(this.user.flairs);
+		
+		 var rec=this.getRecievedFlairs();
+		 if(this.user.id===$flair.login.user.id || rec.length>0){
+		 	//do nothing
+		 }else{
+		   	$('#footer').hide();
+		 }
 			
 	},
 	
@@ -170,6 +252,7 @@ $flair.user = {
 	},
 	
 	loadUser: function(id) {
+
 		var that = this;	
 		var url="search.php";
 		data="&type=user";	

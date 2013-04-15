@@ -6,6 +6,7 @@
   if($action=="delete"){
 	$updateData['expired'] = '1';
 	$db->update("activation",$updateData, "uid='{$user->id}' and pid='{$pid}'");
+	mysql_query("delete from role where uid='{$user->id}' and pid='{$pid}'");
 	exit(0);  
   }
 
@@ -31,11 +32,20 @@
     $aid = $db->insert('activation', $newData);
   
     $output['status'] = true;
-	$output['aid'] = $aid;
-	$output['code'] = $newData['code'] ;
 	
-	$mysqldate->addDays(2);
-	$output['expires'] = $mysqldate->time;
+	$placeData=$db->selectRow("select place.pid,place.lat,place.lng,place.name, place.vicinity, code from place inner join activation on place.pid=activation.pid where activation.uid={$user->id} and expired=0");
+	
+	if($placeData){
+		$placeObj['pid'] = $placeData['pid'];
+		$placeObj['lat'] = $placeData['lat'];
+		$placeObj['lng'] = $placeData['lng'];
+		$placeObj['name'] = $placeData['name'];
+		$placeObj['vicinity'] = $placeData['vicinity'];
+		$placeObj['code'] = $placeData['code'];
+	}
+	
+	$output['place'] = $placeObj; 
+	
 	echo json_encode($output);
   
   }

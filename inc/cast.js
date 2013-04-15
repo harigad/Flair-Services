@@ -18,18 +18,18 @@ $flair.cast = {
 		       str += cast[i].name.split(" ")[0];
 		   
 			   str += "<br><span style='font-size:0.5em;font-family:verdana;color:#6996F5;padding:5px;' >";
-		       str += cast[i].role;
+		       str += cast[i].role_name;
 			   str += "</span>";			   
 		   
 		   str += "</span>";
 		 	   
 		 str += "</div></a>";
 		 }
-	   }
+	   }   
 	   
 	   
-	   
-	   	     str += "<a href=\"#page=role&title=" + escape("New Cast Member") + "&id=" + this.placeObj.id + "\" ><div style='margin-top:3px;margin-bottom:8px;margin-left:8px;margin-right:8px;vertical-align:top;position:relative;background-color:#fff;display:block;text-align:left;' >";
+	   if($flair.login.user.place.pid){
+	   	   str += "<a href=\"#page=role&title=" + escape("New Cast Member") + "&id=" + this.placeObj.id + "\" ><div style='margin-top:3px;margin-bottom:8px;margin-left:8px;margin-right:8px;vertical-align:top;position:relative;background-color:#fff;display:block;text-align:left;' >";
 		   str += "<div class='flair_thumb' style='font-size:3.0em;width:130px;vertical-align:top;margin-top:1px;margin-bottom:0px;margin-left:0px;margin-right:0px;' >+</div>";
 		   str += "<span style='display:inline-block;font-size:2.5em;font-family:verdana;color:#ddd;padding:5px;' >";
 		       str += "ADD";		   
@@ -40,7 +40,7 @@ $flair.cast = {
 		   str += "</span>";
 		 	   
 		 str += "</div></a>";
-	   
+	   }
 	   
 	   
 	   $flair.window.printPage(str);
