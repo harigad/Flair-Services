@@ -14,6 +14,26 @@ if($user->loggedin != true) {
   return;
 }
 
+$action = $_POST['action'];
+$fid = $_POST['fid'];
+
+if($action === "delete" && isset($fid)){
+	$flairObj = $db->selectRow("select recipient from feed where fid = '{$fid}'");
+	if($flairObj){
+		mysql_query("delete from feed where fid = '{$fid}' and (user = {$user->id} or recipient = {$user->id})");
+	    $recpObj = $db->selectRow("select count(feed.fid),user.fbid from feed 
+	    inner join user on feed.recipient = user.id 
+	    where feed.recipient = ". $flairObj[0]);
+		if($recpObj){
+			if($recpObj[0] == 0 && isset($recpObj[1]) == false){
+				mysql_query("delete from role where uid = " . $flairObj[0]);
+				mysql_query("delete from user where id = " . $flairObj[0]);
+			}
+		}
+	}
+	return;
+}
+
 $place = $_POST['place'];
 
 $flair = $_POST['flair'];
@@ -80,12 +100,17 @@ if (isset($flair) && isset($adjective) && isset($food) && ($recipient!="") ) {
                 $phone = $r->result->formatted_phone_number;
                 $address = $r->result->formatted_address;
         } 
-	//---------------------------------------------------------------------------------
-*/	
-		$obj->pid = $place;	
+	//---------------------------------------------------------------------------------*/
+
 		$obj->stickers = buildStickers(-1,$user->id);
-								
 		$obj->status = 1;
+		
+		ob_start();
+		$global_user_id = $recipient;
+		include_once 'functions/user.php'; 
+		    $recp_data = ob_get_contents();
+			$obj->recipient =  json_decode($recp_data);
+		ob_end_clean();
 }else{
     $obj->status = 0;
 	$obj->title = "";
@@ -162,8 +187,16 @@ function _update_recipient_photo($recipient,$pid){
 		  	$_data_photo['photo'] = "images/flairs/100/" . $icon . ".png";
 			$_data_photo['photo_big'] = "images/flairs/300/" . $icon . ".png";
 			$db->update("user",$_data_photo,"id = '{$recipient}'");
-		    
+			
+		  	$flair_icons_arr = $db->selectRows("select flair from feed 
+		  	WHERE recipient = '{$recipient}' order by created desc limit 5");
+			$flair_icons = array();
+				while($flair_icon = mysql_fetch_array($flair_icons_arr)){
+					array_push($flair_icons,$flair_icon[0]);
+				}
+		  
 			$_role_data['role'] = $_roles[$icon];
+			$_role_data['flairs'] = json_encode($flair_icons);
 			$db->update("role",$_role_data,"uid = '{$recipient}' and pid = '{$pid}'");
 			}	
 		}

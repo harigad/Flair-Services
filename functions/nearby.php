@@ -5,5 +5,5 @@
 
 	$stickers = buildStickers(null,0,"",true);
 	echo json_encode($stickers);
-	
+
 ?>

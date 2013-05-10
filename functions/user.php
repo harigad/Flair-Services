@@ -1,5 +1,7 @@
 <?php 	
-		if($_POST['id']=="me" || $_POST['id']==$user->id){
+		if($global_user_id){
+			$userid = $global_user_id;
+		}else if($_POST['id']=="me" || $_POST['id']==$user->id){
 			$myProfile=true;
 			$userid=$user->id;
 		}else{
@@ -12,14 +14,16 @@
 						$userJSON['uid'] = $userid;
 						$userJSON['id'] = $userid;
 						$userJSON['name'] = $thisUser['name'];
+						$userJSON['invited'] = true;
 						
 					if($myProfile){
 					
-						  $role=$db->selectRow("Select role.role,place.name,place.pid,lat,lng from role inner join place on role.pid=place.pid where uid={$user->id} limit 1");
+						  $role=$db->selectRow("Select role.role,place.name,place.city,place.pid,lat,lng from role inner join place on role.pid=place.pid where uid={$user->id} limit 1");
 						  if($role){
 							$place['pid']=$role['pid'];
 							$place['name']=$role['name'];
 							$place['role']=$role['role'];
+							$place['city']=$role['city'];
 							$place['lat']=$act['lat'];
 							$place['lng']=$act['lng'];
 							$userJSON['place']=$place;					
@@ -40,13 +44,14 @@
 						
 						
 					}else{
-						  $role=$db->selectRow("Select role.role,place.name,place.pid,lat,lng from role inner join place on role.pid=place.pid where uid={$userid} limit 1");
+						  $role=$db->selectRow("Select role.role,place.city,place.name,place.pid,lat,lng from role inner join place on role.pid=place.pid where uid={$userid} limit 1");
 						  if($role){
 							$place['pid']=$role['pid'];
 							$place['name']=$role['name'];
 							$place['role']=$role['role'];
-							$place['lat']=$act['lat'];
-							$place['lng']=$act['lng'];
+							$place['city']=$role['city'];
+							$place['lat']=$role['lat'];
+							$place['lng']=$role['lng'];
 							$userJSON['place']=$place;
 							}
 					}

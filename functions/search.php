@@ -144,12 +144,12 @@
 	
 	function addPlaces($r) {
 	global $db,$places;
-		$tw = new stdClass();
+		/*$tw = new stdClass();
 		$tw->id = "tw_career_fair";
 		$tw->name = "TW Career Fair";
 		$tw->geometry->location->lat = "-96.8038130";
 		$tw->geometry->location->lng = "32.7964690";
-		array_unshift($r,$tw);
+		array_unshift($r,$tw);*/
 	foreach ($r as $key => $val) {
             $placeObj = $db->selectRow("select pid,phone,vicinity from place where gid='{$val->id}'");
             if ($placeObj && $placeObj['vicinity']) {

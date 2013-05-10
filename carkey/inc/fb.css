@@ -1,36 +1,18 @@
 body{
     margin:0px;text-align:center;
-	font-family:'PT Sans',sans-serif;font-size:62.5%;;color:#444;
-    	
+	font-family:'PT Sans',sans-serif;font-size:62.5%;;color:#444;	    	
 }
 
-.signup{
- background-image:url(../images/bg.png);
- background-repeat:repeat-x;
- height:100%;
- background-position:0px -100px;
- position:relative;
-}
+
+#main{
+position:relative;}
 
 #signup_logo{
-display:inline-block;
+margin-left:auto;margin-right:auto;
 width:128px;
-height:128px;top:50px;left:50%;position:absolute;
-}
-
-#signup_logo div{
-	position:relative;
-	width:128px;height:128px;
-	position:relative;
-	background-image:url(../images/logo.png);
-	left:-50%;	display:inline-block;
-	color:#ccc;
- font-family: "ff-din-web",Helvetica Neue,Helvetica,Arial,sans-serif;
- font-size: 5.3em;
- font-weight: 200;
- line-height: 1.3em;
- text-shadow: 0 1px 1px white;
- letter-spacing: -1px;
+height:128px;
+background-image:url(../images/logo.png);
+margin-bottom:20px;
 }
 
 #header div{
@@ -47,10 +29,15 @@ margin:0px;padding:0px;
 }
 
 #error{
-color:#990000;padding:20px;font-size:0.5em;text-align:center;
+	color:#990000;padding:10px;margin:0px;font-size:20px;text-align:center;
 }
 
-#header {	 
+#header {
+ background-image:url(../images/bg.png);
+ background-repeat:repeat-x;
+ background-position:center bottom;
+ 
+ 
  color:#939393;
  font-family: "ff-din-web",Helvetica Neue,Helvetica,Arial,sans-serif;
  font-size: 2.3em;
@@ -58,7 +45,7 @@ color:#990000;padding:20px;font-size:0.5em;text-align:center;
  line-height: 1.3em;
  text-shadow: 0 1px 1px white;
  letter-spacing: -1px;
- position:absolute;top:175px;left:0px;text-align:center;
+padding-top:60px;
  width:100%;
 }
 

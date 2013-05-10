@@ -27,7 +27,8 @@ function buildPlace($pid,$name,$lat,$lng,$phone=null,$city=null){
 				user.name as name,
 				user.photo as photo,
 				user.photo_big as photo_big, 
-				role.role as role from user 
+				role.role as role,
+				role.flairs as flairs from user 
 				left outer join role on user.id=role.uid where role.pid = '{$pid}'");
 				while($castMember = mysql_fetch_array($castData)) {							
 					array_push($cast,$castMember);

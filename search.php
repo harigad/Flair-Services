@@ -35,6 +35,10 @@ if($type=="_data" ){
 
 	 include_once 'functions/_data.php'; 
 
+}else if($type=="new_hires" ){
+
+	 include_once 'functions/new_hires.php'; 
+
 }else if($type=="like" ){
 
 	 include_once 'functions/like.php'; 
