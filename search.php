@@ -10,6 +10,7 @@ $db = new db();
 $browser = new browser();
 $user = new user();
 
+
 if (isset($_POST['lat']) && isset($_POST['lat']) && $_POST['lat'] != "" && $_POST['lng'] != "") {
     $_SESSION['lat'] = $_POST['lat'];
     $_SESSION['lng'] = $_POST['lng'];
@@ -18,6 +19,11 @@ if (isset($_POST['lat']) && isset($_POST['lat']) && $_POST['lat'] != "" && $_POS
 $search = $_POST['search'];
 $type = $_POST['type'];
 $id = $_POST['id'];
+
+
+
+$debug_log["log"] = "new request: {$search} - {$type} - {$id}";
+$db->insert("debug_log", $debug_log);
 
 
 //echo "---------------" . $type;

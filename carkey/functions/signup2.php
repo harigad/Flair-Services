@@ -5,8 +5,17 @@ include_once 'getinfo.php';
 $sessionId = samplelogon();
 
 $plate=$_POST['plate'];
-$stateDMV=$_POST['state'] . "DMV";
-if($plate && $stateDMV){
+$zipcode=$_POST['zipcode'];
+//********************************
+$state = "TX";
+
+//$data['make'] = "honda";
+//$data['model'] = "civic";
+
+//*******************************
+$stateDMV=$state . "DMV";
+
+if($plate && $state){
 	$data = lookUpPlate($plate,$stateDMV);
 	$_SESSION['data']=$data;	
 }else{
@@ -16,16 +25,21 @@ if($plate && $stateDMV){
 	return;
 }
 
-
+//$_SESSION['data'] = "FOUND";
 if($_SESSION['data']=="NOTFOUND"){
-	$response->error="Sorry! we were unable to locate a vehichle with the plate number  <b>$plate</b> in $stateDMV";
+	$response->error="We were unable to locate a vehichle with the plate number $plate";
 	$response->status=0;
 }else{
-	$exists = $db->selectRow("select cid from car where vin='{$data['Vin Number']}'");
+	//$exists = $db->selectRow("select cid from car where vin='{$data['Vin Number']}'");
+	$exists = $db->selectRow("select car.cid,model.name as modelName,make.name as makeName from car 
+	inner join owner on owner.cid = car.cid
+	inner join model on car.moid = model.moid 
+	inner join make on model.mid = make.mid 
+	where car.vin='" . $data['Vin Number'] . "'");
 
 	if($exists){
 		$response['status']=0;
-		$response['error']="Sorry! An other <b>user</b> holds the <b>Car Keys</b> to this " . $data['Make'] ;
+		$response['error']="The Car Keys of this " . $exists['makeName']  . " " . $exists['modelName'] . " is already taken!" ;
 	}else{
 	
 	    $moid = createMakeAndModel($data['Make'],$data['Model']);
@@ -37,6 +51,7 @@ if($_SESSION['data']=="NOTFOUND"){
 		$response->model = $modelData['model_name'];
 		$response->year = $data['Model Year'];
 		$response->logo = $modelData['logo'];
+		
 	}
 }
 

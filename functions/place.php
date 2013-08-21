@@ -62,6 +62,13 @@ function buildPlace($pid,$name,$lat,$lng,$phone=null,$city=null){
 				  $user->loadFriends();				  
 				  $whereClause = " feed.place={$pid} ";				
 				}
+				
+				
+				if($_POST['date']){
+					$whereClause = $whereClause . " and feed.created < '" . $_POST['date'] . "' ";
+				}	
+	
+	//echo "-------->" . $whereClause . "----";return;
 			
 				$stickersDataTempArray = $db->selectRows("select 
 				feed.fid, '' as feed_photo,
@@ -76,6 +83,7 @@ function buildPlace($pid,$name,$lat,$lng,$phone=null,$city=null){
 				user_r.id as recipient,
 				user_r.name	as recipientname,
 				user_r.photo_big as recipient_photo_big,
+				feed.created as updated,
 	
 				feed.likes,
 	
@@ -95,7 +103,7 @@ function buildPlace($pid,$name,$lat,$lng,$phone=null,$city=null){
 				left outer join user as user_r on feed.recipient = user_r.id 
 				left outer join likes on feed.fid = likes.target_id and likes.uid = '{$user->id}' 
 				
-				where " . $whereClause . " order by {$orderFields} feed.created desc limit 10");
+				where " . $whereClause . " order by {$orderFields} feed.created desc limit 3");
 			
 				while($stickerDataTemp = mysql_fetch_array($stickersDataTempArray))
 				  {							

@@ -1,4 +1,9 @@
-<?php 
+<?php
+
+	$debug_log["log"] = "starting 0";
+	$db->insert("debug_log", $debug_log);
+
+ 
  if ($_POST['searchMode'] == "place") {
 
 	$pid=$_POST['pid'];
@@ -56,11 +61,14 @@
 		return;
 	}
 		
-		
-        $url = "https://maps.googleapis.com/maps/api/place/search/json?";
+		$debug_log["log"] = "starting 1";
+		$db->insert("debug_log", $debug_log);
+	
+        $url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?";
         $par = "&key=AIzaSyAqYsZa6MJ97_Q-8NlafqfvIAki3W8pRQU";
 		$par .= "&sensor=true";
 		$par .= "&types=bakery|bar|cafe|casino|food|meal_delivery|meal_takeaway|restaurant";
+		
 		
 		if(isset($_POST['lat']) && isset($_POST['lng'])) {
 			$_SESSION['lat'] = $_POST['lat'];
@@ -72,17 +80,24 @@
 		 	  	$par.="&name=" . urlencode($search);
 		    	} 
 			$preRadiusPar = $par;
+			
+			
 		}else if(isset($_POST['city'])){
 		  	$url  = "https://maps.googleapis.com/maps/api/place/textsearch/json?";
 		  	$par .= "&query=" . urlencode($search . " near " . $_POST['city']);
 		}
 		
         if (isset($search) && $search != "") {
+        	$par.="&radius=500";
            //no radius
         }else{
         	$search = "";
-			$par.="&radius=1000";
+			$par.="&radius=500";
 		}
+
+		$debug_log['log'] = $url . $par;
+		$db->insert("debug_log", $debug_log);
+
 
 		$results = file_get_contents("{$url}{$par}");
 				

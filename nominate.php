@@ -63,7 +63,7 @@ if (isset($flair) && isset($adjective) && isset($food) && ($recipient!="") ) {
 	
 	_update_recipient_photo($recipient,$place);
 	
-/*	//Update Place address info---------------------------------------------------------------------
+///*	//Update Place address info---------------------------------------------------------------------
 		$placeObj=$db->selectRow("select * from place where pid='{$place}'");
 	        if ($placeObj['address'] === "" || isset($placeObj['address']) === false) {
 
