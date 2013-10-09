@@ -51,7 +51,6 @@ if($_SESSION['data']=="NOTFOUND"){
 		$response->model = $modelData['model_name'];
 		$response->year = $data['Model Year'];
 		$response->logo = $modelData['logo'];
-		
 	}
 }
 

@@ -51,25 +51,24 @@ function buildPlace($pid,$name,$lat,$lng,$phone=null,$city=null){
 				$stickers = array();	
 				
 				if($pid==-1){
-				  $whereClause = " feed.user={$userid} or feed.recipient ={$userid} ";				
+				  $whereClause = " ( feed.user={$userid} or (feed.recipient ={$userid} and feed.user = $user->id) or (feed.recipient ={$userid} and feed.approved = 1) ) ";				
 				}else if($friends != ""){
-				  $whereClause = " user.fbid in ($friends) ";
+				  $whereClause = " user.fbid in ($friends)  and feed.approved = 1 ";
 				}else if($local){
 				   $extraFields = ",( ABS({$_lat} - place.lat) + ABS({$_lng} - place.lng) ) as dist "; 
-				   $whereClause = " 1=1 ";
+				   $whereClause = " 1=1 and feed.approved = 1 ";
 				   $orderFields = " dist desc,";		
 				}else {				  
-				  $user->loadFriends();				  
+				  //$user->loadFriends();				  
 				  $whereClause = " feed.place={$pid} ";				
 				}
-				
 				
 				if($_POST['date']){
 					$whereClause = $whereClause . " and feed.created < '" . $_POST['date'] . "' ";
 				}	
 	
 	//echo "-------->" . $whereClause . "----";return;
-			
+			//$db->debug = true;
 				$stickersDataTempArray = $db->selectRows("select 
 				feed.fid, '' as feed_photo,
 				feed.user as uid,
@@ -84,6 +83,7 @@ function buildPlace($pid,$name,$lat,$lng,$phone=null,$city=null){
 				user_r.name	as recipientname,
 				user_r.photo_big as recipient_photo_big,
 				feed.created as updated,
+				feed.approved as approved,
 	
 				feed.likes,
 	
@@ -103,8 +103,8 @@ function buildPlace($pid,$name,$lat,$lng,$phone=null,$city=null){
 				left outer join user as user_r on feed.recipient = user_r.id 
 				left outer join likes on feed.fid = likes.target_id and likes.uid = '{$user->id}' 
 				
-				where " . $whereClause . " order by {$orderFields} feed.created desc limit 3");
-			
+				where " . $whereClause . " order by {$orderFields} feed.created desc limit 10");
+			//$db->debug = false;
 				while($stickerDataTemp = mysql_fetch_array($stickersDataTempArray))
 				  {							
 					$stickerDataTemp['likes'] = json_decode($stickerDataTemp['likes']);

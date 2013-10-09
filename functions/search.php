@@ -1,5 +1,4 @@
 <?php
-
 	$debug_log["log"] = "starting 0";
 	$db->insert("debug_log", $debug_log);
 
@@ -170,12 +169,13 @@
             if ($placeObj && $placeObj['vicinity']) {
                 $pid = $placeObj['pid'];
 				$phone = $placeObj['phone'];
+				$vicinity = $placeObj['vicinity'];
             } else {
             	
 				if($val->vicinity){
 					$vicinity = $val->vicinity;
 				}else{
-					$vicinity = $val->formatted_address;
+					$vicinity = "";
 				}
 				
                 $newPlaceData['name'] = $val->name;
@@ -196,7 +196,6 @@
 			$place['lng'] = $val->geometry->location->lng;
 			$place['phone'] = $phone;
 			$place['vicinity'] = $vicinity;
-			
 			
 				$cast = array();
 				$castData = $db->selectRows("select distinct user.id as uid,

@@ -5,7 +5,7 @@ class user {
     function __construct() {
        
         $this->appid = "201613399910723";
-        $this->secret = "f9d1066dece458488107b4b0e0bc9c79";
+        $this->secret = "089cd274d97010646439dd8af891b948";
 
         // Create our Application instance.
         $this->facebook = new Facebook(array(

@@ -3,8 +3,8 @@ include_once 'country.php';
 
 //$countrycode=array_search(strtoupper($_POST['countrycode']),$country);
 $countrycode="US";
-$expdate=$_POST['month'].$_POST['year'];
-if(strlen($expdate)==5) $expdate="0".$expdate;
+//$expdate=$month . $year;
+//if(strlen($expdate)==5) $expdate="0".$expdate;
 // Set PayPal API version and credentials.
 $api_version = '85.0';
 $api_endpoint = 'https://api-3t.paypal.com/nvp';
@@ -22,18 +22,18 @@ $request_params = array
 					'VERSION' => $api_version, 
 					'PAYMENTACTION' => 'Sale', 					
 					'IPADDRESS' => $_SERVER['REMOTE_ADDR'],
-					'CREDITCARDTYPE' => $_POST['creditcardtype'], 
-					'ACCT' => $_POST['acct'], 						
+					//'CREDITCARDTYPE' => $_POST['creditcardtype'], 
+					'ACCT' => $acct, 						
 					'EXPDATE' => $expdate, 			
-					'CVV2' => $_POST['cvv2'], 
-					'FIRSTNAME' =>$_POST['firstname'], 
-					'LASTNAME' => $_POST['lastname'], 
-					'STREET' => $_POST['street'], 
-					'CITY' => $_POST['city'], 
-					'STATE' => $_POST['state'], 					
+					'CVV2' => $cvv2, 
+					'FIRSTNAME' =>$firstname, 
+					'LASTNAME' => $lastname, 
+					'STREET' => $street, 
+					'CITY' => $city, 
+					'STATE' => $state, 					
 					'COUNTRYCODE' => $countrycode, 
-					'ZIP' => $_POST['zip'], 
-					'AMT' => '1.00', 
+					'ZIP' => $zip, 
+					'AMT' => '0.02', 
 					'CURRENCYCODE' => 'USD', 
 					'DESC' => 'Direct Payment' 
 					);
@@ -60,17 +60,18 @@ curl_close($curl);
 // Parse the API response
 $result_array = NVPToArray($result);
 
-echo '<pre />';
 if($result_array["ACK"]=="Failure")
 {
-	//print_r($result_array);
-	echo 'Transaction Failed :-  <br/><br/>Error code :- '.$result_array["L_ERRORCODE0"].'<br/>Error message :-  '.$result_array["L_SHORTMESSAGE0"].'<br/>Error Description :-  '.$result_array["L_LONGMESSAGE0"];
-	if($result_array["L_ERRORCODE0"]!="")
-		echo '<br/><br/>Error code :- '.$result_array["L_ERRORCODE1"].'<br/>Error message :-  '.$result_array["L_SHORTMESSAGE1"].'<br/>Error Description :-  '.$result_array["L_LONGMESSAGE1"];
+	print_r($result_array);
+	//echo 'Transaction Failed :-  <br/><br/>Error code :- '.$result_array["L_ERRORCODE0"].'<br/>Error message :-  '.$result_array["L_SHORTMESSAGE0"].'<br/>Error Description :-  '.$result_array["L_LONGMESSAGE0"];
+	//if($result_array["L_ERRORCODE0"]!="")
+	//	echo '<br/><br/>Error code :- '.$result_array["L_ERRORCODE1"].'<br/>Error message :-  '.$result_array["L_SHORTMESSAGE1"].'<br/>Error Description :-  '.$result_array["L_LONGMESSAGE1"];
+	$address_verified = false;
 }
-else if($result_array["ACK"]=="Success")
-	echo 'Transaction Succeeded';
-
+else if($result_array["ACK"]=="Success") {
+	$address_verified = true;
+}
+/*
 echo "<br/><br/><br/>"."User entered details:-<br/><br/>";
 $i=0;
 foreach($request_params as $key => $val)
@@ -79,6 +80,9 @@ foreach($request_params as $key => $val)
 			echo $key." :- ".$val."<br/>";
 	$i++;
 }
+*/ 
+ 
+ 
 // Function to convert NTP string to an array
 function NVPToArray($NVPString)
 {

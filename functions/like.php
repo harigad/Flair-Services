@@ -20,7 +20,7 @@ mysql_query("delete from likes where target_id='{$fid}' and uid='{$user->id}'");
 			$db->insert("comment_like",$_data);
 		}
 	}
-			$likesArr = $db->selectRows("select user.id as uid,name,photo,likes.type from likes inner join user on likes.uid = user.id where target_id='{$fid}' order by likes.created desc limit 7");
+			$likesArr = $db->selectRows("select user.id as uid,name,photo,photo_big,likes.type from likes inner join user on likes.uid = user.id where target_id='{$fid}' order by likes.created desc limit 7");
 			while ($like = mysql_fetch_object($likesArr)) {
            		array_push($likes,$like);
             }

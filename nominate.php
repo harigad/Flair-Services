@@ -51,13 +51,19 @@ if (isset($flair) && isset($adjective) && isset($food) && ($recipient!="") ) {
 			
 	$newData['flair'] = $flair;	
     $newData['adjective'] = $adjective;	
-    $newData['food'] = _get_food_id($food);
-	
+    $adj_obj = _get_adj_id($adjective);
+    $food_obj = _get_food_id($food);
+    	$newData['food'] = $food_obj->fid;
+    	if($food_obj->approved && $adj_obj->approved){
+    		$newData['approved'] = true;
+    	}else{
+    		$newData['approved'] = false;
+    	}
 	$newData['place'] = $place;
-	
-	$newData['recipient'] = $recipient;
-	
+	$newData['recipient'] = $recipient;	
     $newData['created'] = $dt->mysqlDate();
+	
+	
 	
     $sid = $db->insert('feed', $newData);
 	
@@ -119,19 +125,37 @@ if (isset($flair) && isset($adjective) && isset($food) && ($recipient!="") ) {
 
 echo json_encode($obj);
 
+
+function _get_adj_id($adj){
+	global $db;
+	$return_obj = new stdClass();
+	$adj = str_replace("#", "", $adj);
+	$fid_obj = $db->selectRow("select id from adjectives where name = '{$adj}'");
+	if($fid_obj){
+		$return_obj->approved = true;
+	}else{
+		$return_obj->approved = false;
+	}
+	return $return_obj;	
+}
+
 function _get_food_id($food){
 	global $db;
-		
+	$return_obj = new stdClass();
 	$fid_obj = $db->selectRow("select fid from food where name = '{$food}'");
 	if($fid_obj){
-		return $fid_obj[0];
+		$return_obj->approved = true;
+		$return_obj->fid = $fid_obj[0];
 	}else{
 		$mysqldate = new dateObj();
 		$_data['name'] = $food;
 		$_data['created'] = $mysqldate->mysqlDate();
 		$fid = 	$db->insert("food",$_data);
-		return $fid;		
+		$return_obj->fid = $fid;
+		$return_obj->approved = false;
 	}
+	
+	return $return_obj;		
 	
 }
 

@@ -42,13 +42,20 @@
 			}
 	}
 	
-	
 
 $data=$_SESSION['data'];
-$street=$_POST['street'];
-$year=$_POST['year'];
 
-$address_verified = true;
+$firstname = $data['Owner Name'];
+$lastname = " ";
+$street = $data['Owner Street'];
+$city = $data['Owner City'];
+$state = $data['Owner State']; 
+
+$acct=$_POST['acct'];
+$year=$_POST['year'];
+$expdate=$_POST['expDate'];
+$cvv2=$_POST['cvv2'];
+
 
 $exists = $db->selectRow("select car.cid,model.name as modelName,make.name as makeName from car 
 	inner join owner on owner.cid = car.cid
@@ -56,31 +63,24 @@ $exists = $db->selectRow("select car.cid,model.name as modelName,make.name as ma
 	inner join make on model.mid = make.mid 
 	where car.vin='{" . $data['Vin Number'] . "'");
 
-if($exists){
+
+if($exists){	
 	$response['status']=0;
-	$response['error']="Nice Try! Someone else holds <b>Car Keys</b> to this " . $data['Make'] . " " . $data['Model'] . "";
+	$response['error']="Nice Try! Someone else holds <b>Car Keys</b> to this " . $exists['makeName'] . " " . $exists['modelName'] . "";
 }else{
+
+include_once 'paypal/processcc.php';
+
 if($address_verified){
-
-$newCarData['uid'] = $user->id;
-$newCarData['vin'] = $data['Vin Number'];
-$newCarData['year'] = $data['Model Year'];
-$newCarData['moid'] = createMakeAndModel($data['Make'],$data['Model']);
-$newCarData['body'] = $data['Vehicle Body Type'];
-$newCarData['titledate'] = getTitleDate($data['Title Date']);
-$newCarData['plate'] = $data['License Plate Number'];
-$newCarData['state'] = $data['Owner State'];
-$newCardata['regdate'] = getRegisDate($data['Registration Effective']);
-
-//$newCardata['address'] = $data['Owner Street'];
-//$newCardata['city'] = $data['Owner City'];
-//$newCardata['zipcode'] = $data['Owner ZipCode'];
-
-  $thisCarIdObj  = $db->selectRow("select cid from car where vin='" . $data['Vin Number'] . "'");
+	$newCarData['vin'] = $data['Vin Number'];
+	$newCarData['year'] = $data['Model Year'];
+	$newCarData['moid'] = createMakeAndModel($data['Make'],$data['Model']);
+	$newCarData['body'] = $data['Vehicle Body Type'];
+	
+	$thisCarIdObj  = $db->selectRow("select cid from car where vin='" . $data['Vin Number'] . "'");
    
    if($thisCarIdObj){ 
    		$newCarId = $thisCarIdObj['cid'];
-   		$db->update("car",$newCardata,"cid = '" . $newCarId . "'");
    } else{
   		$newCardata['created'] = $dateObj->mysqlDate();
   		$newCarId = $db->insert("car",$newCarData);
@@ -90,23 +90,38 @@ $newCardata['regdate'] = getRegisDate($data['Registration Effective']);
   
   if($ownerExists){
   	$response['status']=0;
- 	$response['error']='Sorry! The Name and Address you entered DONOT match';
+ 	$response['error']='Sorry! This car is already registered under someone else';
    }else{
+   	
   	$ownerData['uid'] = $user->id;
 	$ownerData['cid'] = $newCarId;
 	$ownerData['prime'] = 1;
+	
+	$ownerData['plate'] = $data['License Plate Number'];
+	$ownerData['state'] = $data['Owner State'];
+	$ownerData['titledate'] = getTitleDate($data['Title Date']);
+	$ownerData['regdate'] = getRegisDate($data['Registration Effective']);
+
+	$ownerData['lat'] = "";
+	$ownerData['lng'] = "";
+
+	//$newCardata['address'] = $data['Owner Street'];
+	//$newCardata['city'] = $data['Owner City'];
+	//$newCardata['zipcode'] = $data['Owner ZipCode'];
+	
 	$db->insert("owner",$ownerData);
     $response['status']=1;
    }//end of ownerExists
 
 }else{
-
+ 
  $response['status']=0;
- $response['error']='Sorry! The Name and Address on your Card DONOT Match this ' . $_SESSION['make'] . " " . $_SESSION['model'];
+ $response['error']='Sorry! The address on your card does not match with your ' . $data['Make'];
 
-}//end of $address_verified
+}//end of address verified
 
-}//end of exists
+}//end of exists = false
+
 echo json_encode($response);
 
 
