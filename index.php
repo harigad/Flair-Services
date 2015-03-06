@@ -1,3 +1,3 @@
 <?php
-	header("Location: /web/ui/index.html");
+	header("Location: /web/carkeys/");
 ?>

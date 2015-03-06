@@ -13,7 +13,8 @@ if($rest_obj && $code==$rest_obj['code']){
 	
 	$insertData['uid']=$rest_obj['uid'];
 	$insertData['pid']=$rest_obj['pid'];
-	  $rid=$db->insert("role",$insertData);
+	$insertData['role'] = 1;
+	$rid=$db->insert("role",$insertData);
 	
 	$updateData['expired'] = 2;
 	$updateData['rid'] = $rid;

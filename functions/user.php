@@ -1,4 +1,5 @@
 <?php 	
+
 		if($global_user_id){
 			$userid = $global_user_id;
 		}else if($_POST['id']=="me" || $_POST['id']==$user->id){
@@ -7,85 +8,116 @@
 		}else{
 			$userid=$_POST['id'];		
 		}
-	
-		$thisUser = $db->selectRow("select * from user where id='{$userid}'");	
 		
-					$flairs = buildStickers(-1,$userid);
+		$thisUser = $db->selectRow("select * from user where id='{$userid}'");	
+		$photo = $thisUser["photo"];
+		$photo_big = $thisUser["photo_big"];
+		
+	    $fql = "SELECT name, pic_square,pic_big FROM user WHERE uid = '" . $thisUser['fbid'] ."'";
+        $result = $user->fql($fql);
+        $update_user_photos["photo"] = $result[0]["pic_square"];
+		$update_user_photos["photo_big"] = $result[0]["pic_big"];
+		if($result){
+			if($result[0]){
+				if(isset($result[0]["pic_square"])){
+					$photo = $update_user_photos["photo"];
+					$photo_big = $update_user_photos["photo_big"];
+					$db->update("user",$update_user_photos,"fbid='" . $thisUser['fbid'] . "'");
+				}
+			}
+		}
 						$userJSON['uid'] = $userid;
 						$userJSON['id'] = $userid;
 						$userJSON['name'] = $thisUser['name'];
-						$userJSON['invited'] = true;
+						$userJSON['photo'] = $photo;
+					    $userJSON['photo_big'] = $photo_big;
+					    
+					      if($userid == $user->id){
+						  $roles=$db->selectRows("Select role.role,place.name as name,place.city,place.vicinity,place.pid,lat,lng from role inner join place on role.pid=place.pid where uid={$user->id}");
+						  $my_places = array();
+						  while($role = mysql_fetch_array($roles)) {							
+							array_push($my_places,$role);
+						  }
+						    $userJSON['places']=$my_places;	
+						  }	
+							$userJSON['feed']=buildStickers(null,$userid);
+					
+						 echo json_encode($userJSON);
+					
+	
+	function loadFlairs($userid){
+	global $db;
+	$stickersDataTempArray = $db->selectRows("select 
+				feed.fid,
+				feed.user as uid,
+				user.name as name,
+				user.photo as photo,
+				user.photo_big as photo_big,
 						
-					if($myProfile){
-					
-						  $role=$db->selectRow("Select role.role,place.name,place.city,place.pid,lat,lng from role inner join place on role.pid=place.pid where uid={$user->id} limit 1");
-						  if($role){
-							$place['pid']=$role['pid'];
-							$place['name']=$role['name'];
-							$place['role']=$role['role'];
-							$place['city']=$role['city'];
-							$place['lat']=$act['lat'];
-							$place['lng']=$act['lng'];
-							$userJSON['place']=$place;					
-						  }else{
-						    $act=$db->selectRow("select place.pid, place.name, place.vicinity, code,lat,lng from place inner join activation on place.pid=activation.pid where activation.uid={$user->id} and expired=0");						   
-						   if($act){
-						     $place['pid']=$act['pid'];
-							 $place['name']=$act['name'];
-							 $place['vicinity']=$act['vicinity'];
-							 $place['code']=$act['code'];
-							 $place['lat']=$act['lat'];
-							 $place['lng']=$act['lng'];
-							 $userJSON['place']=$place;	
-
-						   }
-						
-						}
-						
-						
-					}else{
-						  $role=$db->selectRow("Select role.role,place.city,place.name,place.pid,lat,lng from role inner join place on role.pid=place.pid where uid={$userid} limit 1");
-						  if($role){
-							$place['pid']=$role['pid'];
-							$place['name']=$role['name'];
-							$place['role']=$role['role'];
-							$place['city']=$role['city'];
-							$place['lat']=$role['lat'];
-							$place['lng']=$role['lng'];
-							$userJSON['place']=$place;
-							}
-					}
-					
-					$userJSON['photo'] = $thisUser['photo'];
-					$userJSON['photo_big'] = $thisUser['photo_big'];
-					$userJSON['feed']=$flairs;
-					$userJSON['status'] = true;
-						//$flair_count= $db->selectRow("select count(id) as flair_count from sticker where user='{$userid}' and status=1");					
-						//$place_count= $db->selectRow("select count(id) as flair_count from sticker_temp where user='{$userid}' and status is NULL");
-						//$userJSON['flair_count'] = $flair_count["flair_count"];		
-						//$userJSON['place_count'] = $place_count["flair_count"] + $flair_count["flair_count"];
-										
-					echo json_encode($userJSON);
-					
-					
-					function print_sticker($flair) {
-				$icon = "{$flair->type}.png";	
-				$str = "<div style='vertical-align:top;position:relative;' >";
-					$str .= "<a href=\"#page=food&title=" . $flair->name . "&id=" . $flair->fid . "\" ><div class='flair_thumb' style='background-image:url(/images/icons/" . $icon . ");' ></div></a>";
-					$str .= "<a href=\"#page=place&title={$flair->placename}&id=" . $flair->pid . "\" >";
-						$str .= "<div class='flair_thumb' style='background-color:#fff;color:#999;width:182px;padding:10px;min-height:80px;text-align:left;line-height:1.5em;vertical-align:top;' >";
-							$str .= "<div style='font-size:1.2em;' >";					
-								$str .= "<span style='color:#666;' >" . $flair->name . "</span>";
-								$str .= "<span style='color:#ccc;font-size:0.8em;' ><br>@<br></span>";
-								$str .= "<span style='color:#6996F5;' >" . $flair->placename . "</span>";
-								//$str .= "<span style='color:#ccc;font-size:0.8em;' ><br>in </span>";
-								//$str .= "<span style='font-size:0.8em;' ><i>" . $flair->city . "</i></span>";						
-							$str .= "</div>";								
-						$str .= "</div>";		
-					$str .= "</a>";	
-					
-				$str .= "</div>";
-				echo $str;
-					}
-		
-	?>
+				user_r.id as recipient,
+				user_r.name	as recipientname,
+				user_r.photo as recipient_photo,
+				user_r.photo_big as recipient_photo_big,
+				
+				place.pid as pid,
+				place.name as placename,
+				place.city as city,
+				place.lat as lat,
+				place.lng as lng,
+				place.vicinity as vicinity 
+				
+				from feed
+				left outer join place on feed.place = place.pid 
+				left outer join user as user on feed.user = user.id
+				left outer join user as user_r on feed.recipient = user_r.id
+				
+				where feed.user={$userid} or feed.recipient ={$userid} limit 20");
+				$stickers = array();
+				
+				while($stickerDataTemp = mysql_fetch_array($stickersDataTempArray))
+				  {							
+					array_push($stickers,$stickerDataTemp);
+				}
+								
+				return $stickers;
+	}
+	
+	
+	
+	
+	function loadFriends($fbid){
+		  global $db;global $user;
+		  $friendsArr = array();	
+		  $friendsFB = $user->fql("SELECT uid FROM user WHERE uid IN (SELECT uid2 FROM friend WHERE uid1 = '" . $fbid ."') and has_added_app=1");
+		  $friendsStr="";
+		  foreach($friendsFB as $key => $val){
+			 $friendsStr=$friendsStr . $val['uid'] . ",";		
+		  }		
+		  $friendsStr = substr($friendsStr,0,count($friendsStr)-2);
+		  $sqlCast = "select 
+			    user.id as uid,
+				user.name as name,
+				user.photo as photo,
+				user.photo_big as photo_big,
+				
+				role.created as updated,
+				role.role as role_id,
+				1 as isCastData,
+				place.pid as pid,
+				place.name as placename,
+				place.city as city,
+				place.lat as lat,
+				place.lng as lng,
+				place.vicinity as vicinity 		
+				from role
+				inner join user on role.uid = user.id 
+				inner join place on role.pid = place.pid
+				where user.fbid in ({$friendsStr}) ";
+				$friends = $db->selectRows($sqlCast);
+				while($friend = mysql_fetch_array($friends))
+				  {							
+					array_push($friendsArr,$friend);
+				  }
+				return $friendsArr;
+	}
+?>

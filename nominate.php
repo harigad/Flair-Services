@@ -11,7 +11,7 @@ $browser = new browser();
 $user = new user();
 
 if($user->loggedin != true) {
-  return;
+  echo -1;return;
 }
 
 $action = $_POST['action'];
@@ -35,80 +35,32 @@ if($action === "delete" && isset($fid)){
 }
 
 $place = $_POST['place'];
-
-$flair = $_POST['flair'];
-$adjective = $_POST['adjective'];
-$food = trim($_POST['food']);
 $recipientName = $_POST['recipientName'];
-$recipient = "";
+$recipient = $_POST['recipient'];
 
-$recipient = _getRecipient($recipientName,$place);
+//$recipient = _getRecipient($recipientName,$place);
 
-if (isset($flair) && isset($adjective) && isset($food) && ($recipient!="") ) {
+if (isset($place) && isset($recipient)){//} && isset($flair) ($recipient!="") ) {
     $dt = new dateObj();
 	
     $newData['user'] = $user->id;
-			
-	$newData['flair'] = $flair;	
-    $newData['adjective'] = $adjective;	
-    $adj_obj = _get_adj_id($adjective);
-    $food_obj = _get_food_id($food);
-    	$newData['food'] = $food_obj->fid;
-    	if($food_obj->approved && $adj_obj->approved){
-    		$newData['approved'] = true;
-    	}else{
-    		$newData['approved'] = false;
-    	}
 	$newData['place'] = $place;
 	$newData['recipient'] = $recipient;	
     $newData['created'] = $dt->mysqlDate();
 	
+	$isDuplicate = $db->selectRow("select fid from feed where user = '" . $user->id . "' and recipient = '" . $recipient . "'  and DATE(created) = CURDATE() limit 1");
 	
+	if($isDuplicate){
+		 $obj->status = 0;
+		 $obj->title = "";
+         $obj->message = "Oops! Stop clicking so fast!";
+		 echo json_encode($obj);return;	 
+	}
 	
     $sid = $db->insert('feed', $newData);
-	
-	_update_recipient_photo($recipient,$place);
-	
-///*	//Update Place address info---------------------------------------------------------------------
-		$placeObj=$db->selectRow("select * from place where pid='{$place}'");
-	        if ($placeObj['address'] === "" || isset($placeObj['address']) === false) {
+	//_update_recipient_photo($recipient,$place);
 
-                $url = "https://maps.googleapis.com/maps/api/place/details/json?";
-                $par = "&key=AIzaSyAqYsZa6MJ97_Q-8NlafqfvIAki3W8pRQU";
-                $par.= "&sensor=true";
-                $par.= "&reference={$placeObj['gref']}";
-                $results = file_get_contents("{$url}{$par}");
-				//echo "{$url}{$par}";
-				//echo $results;
-                $r = json_decode($results);
-                $updateData['phone'] = $r->result->formatted_phone_number;
-                $updateData['address'] = $r->result->formatted_address;
-				
-				$address_components = $r->result->address_components;
-				
-				foreach($address_components  as $ad => $adc){
-					
-					switch ($adc->types[0]) {
-						case "street_number":
-							$updateData['streetnum'] = $adc->long_name;
-						case "route":
-							$updateData['streetname'] = $adc->long_name;
-						case "locality":
-							$updateData['city'] = $adc->long_name;
-						case "administrative_area_level_1":
-							$updateData['state'] = $adc->long_name;
-						case "postal_code":
-							$updateData['zip'] = $adc->long_name;						
-					}
-				}
-				
-                $db->update("place",$updateData,"pid = '{$place}'");
-                $phone = $r->result->formatted_phone_number;
-                $address = $r->result->formatted_address;
-        } 
-	//---------------------------------------------------------------------------------*/
-
-		$obj->stickers = buildStickers(-1,$user->id);
+		$obj->stickers = buildStickers($place);
 		$obj->status = 1;
 		
 		ob_start();
@@ -124,40 +76,6 @@ if (isset($flair) && isset($adjective) && isset($food) && ($recipient!="") ) {
 }
 
 echo json_encode($obj);
-
-
-function _get_adj_id($adj){
-	global $db;
-	$return_obj = new stdClass();
-	$adj = str_replace("#", "", $adj);
-	$fid_obj = $db->selectRow("select id from adjectives where name = '{$adj}'");
-	if($fid_obj){
-		$return_obj->approved = true;
-	}else{
-		$return_obj->approved = false;
-	}
-	return $return_obj;	
-}
-
-function _get_food_id($food){
-	global $db;
-	$return_obj = new stdClass();
-	$fid_obj = $db->selectRow("select fid from food where name = '{$food}'");
-	if($fid_obj){
-		$return_obj->approved = true;
-		$return_obj->fid = $fid_obj[0];
-	}else{
-		$mysqldate = new dateObj();
-		$_data['name'] = $food;
-		$_data['created'] = $mysqldate->mysqlDate();
-		$fid = 	$db->insert("food",$_data);
-		$return_obj->fid = $fid;
-		$return_obj->approved = false;
-	}
-	
-	return $return_obj;		
-	
-}
 
 function _getRecipient($recipientName,$pid){
 	global $db;

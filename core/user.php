@@ -19,13 +19,12 @@ class user {
 		  $this->setAccessToken();		
 		}
 
-
         $this->fbid = $this->facebook->getUser();
-        if (is_null($this->fbid)) {   
+        if (!$this->fbid) {
 			$this->id=-1;
 			$this->fbid=-1;
 			$this->loggedin = false;
-        } else {   
+        } else {
             $this->init($this->fbid);
 			$this->loggedin = true;
         }
@@ -37,27 +36,49 @@ class user {
 	}
 
 
-    function login(){
-        return  $this->facebook->getLoginUrl(array('display' => 'popup', 'next' => 'http://flair.me/mobile.php','redirect_uri' => 'http://flair.me/mobile.php','req_perms' => 'publish_stream'));
+    function login($url){
+        return  $this->facebook->getLoginUrl(array('display' => 'popup', 'next' => $url,'redirect_uri' => $url,'scope' => 'email'));
     }
 
     function init($fbid) {
         global $db;
-        $row = $db->selectRow("select id,name,photo,photo_big from user where fbid='$fbid'");
-        if (is_array($row) == false) {
+       // $db->debug=true;
+        $row = $db->selectRow("select id,name,photo,photo_big from user where fbid='" . $fbid . "' limit 1");
+        if ($row == false) {
             $me = $this->me();
+			
+			$name = $me['name'];
+			
             $data['fbid'] = $fbid;
-            $data['name'] = $me['name'];
+            $data['name'] = $name;
+			$data['email'] = $me['email'];
             $data['photo'] = $me['pic_square'];
             $data['photo_big'] = $me['pic_big'];
-            $id=$db->insert("user", $data);
+			
+			//check again
+			$row = $db->selectRow("select id,name,photo,photo_big from user where fbid='" . $fbid . "' limit 1");
+			if($row == false){
+            	$id=$db->insert("user", $data);
+				$this->name = $data['name'];
+        		$this->photo = $data['photo'];
+        		$this->photo_big = $data['photo_big'];
+        		$this->id = $id;
+			}else{
+				$id = $row['id'];
+				$this->name = $row['name'];
+        		$this->photo = $row['photo'];
+        		$this->photo_big = $row['photo_big'];
+        		$this->id = $id;
+			}
         } else {        
-            $id = $row['id'];
+            	$id = $row['id'];
+				$this->name = $row['name'];
+        		$this->photo = $row['photo'];
+        		$this->photo_big = $row['photo_big'];
+        		$this->id = $id;
         }
-        $this->name = $row['name'];
-        $this->photo = $row['photo'];
-        $this->photo_big = $row['photo_big'];
-        $this->id = $id;
+		
+        
 	
 		}
 		
@@ -114,6 +135,8 @@ class user {
 			  $this->friendsArr = $friendsFB;
 			  $this->friendsStr = $friendsStr;     
 		}
+	  
+	  return $this->friendsStr;
     }
 
 
@@ -179,7 +202,7 @@ class user {
 
 
     function me() {
-        $fql = "SELECT name, pic_square,pic_big FROM user WHERE uid = '{$this->fbid}'";
+        $fql = "SELECT name,email, pic_square,pic_big FROM user WHERE uid = '{$this->fbid}'";
         $result = $this->fql($fql);
         $this->me = $result[0];
         return $this->me;

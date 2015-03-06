@@ -4,47 +4,50 @@
   $action = $_POST['action'];
 
   if($action=="delete"){
-	$updateData['expired'] = '1';
-	$db->update("activation",$updateData, "uid='{$user->id}' and pid='{$pid}'");
-	mysql_query("delete from role where uid='{$user->id}' and pid='{$pid}'");
+	mysql_query("delete from activation where uid='{$user->id}' and pid='{$pid}' and expired=0");
 	exit(0);  
-  }
-
-  $role=$db->selectRow("select * from role where uid='{$user->id}' and pid='{$pid}'");
-  if($role){  
-     editRole();
   }else{
-    newRole($pid);
-  }  
+  	mysql_query("delete from role where uid='{$user->id}' and pid='{$pid}' and expired=0");
+	newActivation($pid,1);
+  }
+  
+  function newActivation($pid){
+  	global $user,$db;
+	$mysqldate=new dateObj();
+	
+	$new['uid'] = $user->id;
+	$new['pid'] = $pid;
+	$new['code'] = "789111";
+	
+	$db->insert("activation",$new);
+	
+	echo $new['code'];
+  }
+  
 
-  function newRole($pid){
+  function newRole($pid,$role){
 	global $user,$db;
 	$mysqldate=new dateObj();
 	
 	$newData['uid'] = $user->id;
 	$newData['pid'] = $pid;
-	$newData['code'] = rand(100000,999999);
+	$newData['role'] = $role;
 	$newData['created'] = $mysqldate->mysqlDate();
 	
-	$updateData['expired'] = '1';
-	$db->update("activation",$updateData, "uid='{$user->id}'");
-	
-    $aid = $db->insert('activation', $newData);
+	$rid = $db->insert('role', $newData);
   
     $output['status'] = true;
 	
-	$placeData=$db->selectRow("select place.pid,place.lat,place.lng,place.name, place.vicinity, code from place inner join activation on place.pid=activation.pid where activation.uid={$user->id} and expired=0");
-	
-	if($placeData){
-		$placeObj['pid'] = $placeData['pid'];
-		$placeObj['lat'] = $placeData['lat'];
-		$placeObj['lng'] = $placeData['lng'];
-		$placeObj['name'] = $placeData['name'];
-		$placeObj['vicinity'] = $placeData['vicinity'];
-		$placeObj['code'] = $placeData['code'];
-	}
-	
-	$output['place'] = $placeObj; 
+		 $role=$db->selectRow("Select place.name,place.city,place.vicinity,place.pid,lat,lng from role inner join place on role.pid=place.pid where uid={$user->id} limit 1");
+						  if($role){
+							$place['pid']=$role['pid'];
+							$place['name']=$role['name'];
+							$place['city']=$role['city'];
+							$place['vicinity']=$role['vicinity'];
+							$place['lat']=$role['lat'];
+							$place['lng']=$role['lng'];
+						  }
+			$output['place'] = $place; 
 	
 	echo json_encode($output);
   

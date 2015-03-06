@@ -1,6 +1,8 @@
 <?php
 function buildPlace($pid,$name,$lat,$lng,$phone=null,$city=null){
 	global $db,$user;
+
+			$isAdmin = $db->selectRow("select * from role where role=1 and pid='{$pid}' and uid='{$user->id}'");
 			
 			$place['id'] = $pid;
 			$place['name'] = $name;
@@ -13,23 +15,18 @@ function buildPlace($pid,$name,$lat,$lng,$phone=null,$city=null){
 
 			$place['feed'] = buildStickers($pid);						
 			
-			//FOOD ----------------------------------------------------------------------------
-				$foods = array();
-				$foodsData = $db->selectRows("select distinct food.fid,food.name from food 
-				inner join feed on food.fid=feed.food where feed.place={$pid}");
-				while($food = mysql_fetch_array($foodsData)) {							
-					array_push($foods,$food);
-				}				
-				$place['foods'] = $foods;					
+						
 			//CAST-----------------------------------------------------------------------------
 				$cast = array();
-				$castData = $db->selectRows("select distinct user.id as uid,
+		
+				$castData = $db->selectRows("select user.id as uid,
 				user.name as name,
 				user.photo as photo,
-				user.photo_big as photo_big, 
-				role.role as role,
-				role.flairs as flairs from user 
-				left outer join role on user.id=role.uid where role.pid = '{$pid}'");
+				user.photo_big as photo_big,
+				role.role as role_id 
+				from user 
+				left outer join role on user.id=role.uid 
+				where role.pid = '{$pid}' order by name");
 				while($castMember = mysql_fetch_array($castData)) {							
 					array_push($cast,$castMember);
 				}
@@ -40,76 +37,95 @@ function buildPlace($pid,$name,$lat,$lng,$phone=null,$city=null){
 				
 			}
 			
-			
-			function buildStickers($pid,$userid=0,$friends="",$local=false) {
+			function buildStickers($pid,$userid=0,$friends="",$local=false,$filter=false) {
 			
 				global $db,$user;
+			//	$db->debug = true;
 				
 				$extraFields="";
 				$orderFields="";
 			
 				$stickers = array();	
 				
-				if($pid==-1){
-				  $whereClause = " ( feed.user={$userid} or (feed.recipient ={$userid} and feed.user = $user->id) or (feed.recipient ={$userid} and feed.approved = 1) ) ";				
+				if($userid){
+				  $whereClause = " ((feed.user={$userid} or feed.recipient = {$userid}) and (user_r.approved = true or feed.user = '{$user->id}') ) ";				
 				}else if($friends != ""){
-				  $whereClause = " user.fbid in ($friends)  and feed.approved = 1 ";
+				  $whereClause = " user.fbid in ($friends) ";
 				}else if($local){
-				   $extraFields = ",( ABS({$_lat} - place.lat) + ABS({$_lng} - place.lng) ) as dist "; 
-				   $whereClause = " 1=1 and feed.approved = 1 ";
-				   $orderFields = " dist desc,";		
-				}else {				  
+				   $whereClause = " user_r.approved = true";
+				   if($filter){
+				   	$whereClause = $whereClause . $filter;
+				   }
+					
+				}else if($pid){				  
 				  //$user->loadFriends();				  
-				  $whereClause = " feed.place={$pid} ";				
+				  $whereClause = "( feed.place={$pid}  and (user_r.approved = true or feed.user = '{$user->id}') )";				
 				}
 				
 				if($_POST['date']){
-					$whereClause = $whereClause . " and feed.created < '" . $_POST['date'] . "' ";
+					$whereClause = $whereClause . " and updated < '" . $_POST['date'] . "' ";
 				}	
 	
 	//echo "-------->" . $whereClause . "----";return;
 			//$db->debug = true;
+			
+				$whereClauseNew = "";
+				if($pid==-1){
+				  $whereClauseNew = " role.uid={$userid}  ";				
+				}else if($friends != ""){
+				  $whereClauseNew = " user.fbid in ($friends) ";
+				}else if($local){
+				   $whereClauseNew = " 1=1 ";
+				   if($filter){
+				   	$whereClauseNew = $whereClause . $filter;
+				   }
+				  // $orderFields = " dist desc,";		
+				}else {				  
+				  $whereClauseNew = " role.pid={$pid} ";				
+				}
+				
+				if($_POST['date']){
+					$whereClauseNew = $whereClauseNew . " and updated < '" . $_POST['date'] . "' ";
+				}	
+			
 				$stickersDataTempArray = $db->selectRows("select 
-				feed.fid, '' as feed_photo,
+				feed.fid,
 				feed.user as uid,
 				user.name as name,
 				user.photo as photo,
-				user.photo_big as photo_big,				
-				likes.type as isLiked, 
-				feed.flair,
-				feed.adjective,
-				food.name as food,
+				user.photo_big as photo_big,
+						
 				user_r.id as recipient,
 				user_r.name	as recipientname,
+				user_r.photo as recipient_photo,
 				user_r.photo_big as recipient_photo_big,
-				feed.created as updated,
-				feed.approved as approved,
-	
-				feed.likes,
-	
+				user_r.approved as approved,
+				
 				place.pid as pid,
 				place.name as placename,
 				place.city as city,
 				place.lat as lat,
 				place.lng as lng,
-				place.vicinity as vicinity			
+				place.vicinity as vicinity,
+                datediff(CURDATE(), feed.created) AS days 
 				
-				{$extraFields} 
 				
 				from feed
 				left outer join place on feed.place = place.pid 
-				left outer join food on feed.food = food.fid 
-				left outer join user as user on feed.user = user.id  
-				left outer join user as user_r on feed.recipient = user_r.id 
-				left outer join likes on feed.fid = likes.target_id and likes.uid = '{$user->id}' 
+				left outer join user as user on feed.user = user.id
+				left outer join user as user_r on feed.recipient = user_r.id
 				
-				where " . $whereClause . " order by {$orderFields} feed.created desc limit 10");
-			//$db->debug = false;
+				where " . $whereClause . " order by feed.created desc limit 10 ");
+		
 				while($stickerDataTemp = mysql_fetch_array($stickersDataTempArray))
 				  {							
 					$stickerDataTemp['likes'] = json_decode($stickerDataTemp['likes']);
 					array_push($stickers,$stickerDataTemp);
 				}
+				
+				
+				
+			
 				
 				return $stickers;	
 			}

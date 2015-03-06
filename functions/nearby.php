@@ -1,9 +1,6 @@
 <?php
-
-	$_lat = $_POST['lat'];
-	$_lng = $_POST['lng'];
-
-	$stickers = buildStickers(null,0,"",true);
-	echo json_encode($stickers);
-
-?>
+$output->feed = buildStickers(null,null,null,true);
+$output->friends = buildStickers(null,null,$user->loadFriends());
+echo json_encode($output);
+ 
+ ?>

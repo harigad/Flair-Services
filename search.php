@@ -1,5 +1,7 @@
 <?php header('Access-Control-Allow-Origin: *');
-error_reporting(E_ALL ^ E_NOTICE);
+      header("Access-Control-Allow-Headers: Origin, X-Requested-With,X-Titanium-Id, Content-Type, Accept");
+	  
+error_reporting(-1);
 session_start();
 include_once 'core/dateClass.php';
 include_once 'core/db.php';
@@ -7,7 +9,9 @@ include_once 'core/Browser.php';
 include_once 'core/user.php';
 include_once 'functions/place.php';
 $db = new db();
+ //   $db->debug = true;
 $browser = new browser();
+
 $user = new user();
 
 
@@ -40,6 +44,14 @@ $db->insert("user_log",$user_log);
 if($type=="_data" ){
 
 	 include_once 'functions/_data.php'; 
+
+}else if($type=="_invite"){
+
+	 include_once 'functions/invite.php'; 
+
+}else if($type=="_signup"){
+
+	 include_once 'functions/signup.php'; 
 
 }else if($type=="new_hires" ){
 

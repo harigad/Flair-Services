@@ -1,21 +1,10 @@
 <?php
-	$debug_log["log"] = "starting 0";
-	$db->insert("debug_log", $debug_log);
-
- 
- if ($_POST['searchMode'] == "place") {
 
 	$pid=$_POST['pid'];
-	
-	$out['lat'] = $_POST['lat'] . "-" . $_POST['lng'];
-			
-	
 	if($pid){
 	$placeObj=$db->selectRow("select pid as id,name,vicinity as city,address,gref,lat,lng,phone from place where pid='{$pid}'");
 		if($placeObj){
-		
 			 if ($placeObj['address'] == "" || isset($placeObj['address']) == false) {
-
                 $url = "https://maps.googleapis.com/maps/api/place/details/json?";
                 $par = "&key=AIzaSyAqYsZa6MJ97_Q-8NlafqfvIAki3W8pRQU";
                 $par.= "&sensor=true";
@@ -44,142 +33,86 @@
 							$updateData['state'] = $adc->long_name;
 						case "postal_code":
 							$updateData['zip'] = $adc->long_name;						
-					}
-				}
+					}//switch
+				}//foreach
 					
                 $db->update("place",$updateData,"pid = '{$pid}'");
                 
-                }
-		}
+                }//address_components
+		}//$placeObj['address'] == "" || isset($placeObj['address']) == false
+			$recipient_uid = $_POST["recipient_uid"];
+			$recipient_name = $_POST["recipient_name"];
+		//	echo "------->" . 
+		   if(isset($recipient_uid) || isset($recipient_name)){
+		   	  createFlair($pid,$recipient_uid,$recipient_name);
+		   }
 		
+		   $place=buildPlace($pid,$placeObj['name'],$placeObj['lat'],$placeObj['lng'],$placeObj['phone'],$placeObj['city']);
+		   echo json_encode($place);
+	}//placeObj	
+
+}else if(isset($_POST['search'])){
 		
-		
-			$place=buildPlace($pid,$placeObj['name'],$placeObj['lat'],$placeObj['lng'],$placeObj['phone'],$placeObj['city']);
-			echo json_encode($place);
-		}	
-		return;
-	}
-		
-		$debug_log["log"] = "starting 1";
-		$db->insert("debug_log", $debug_log);
-	
-        $url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?";
+        $url = "https://maps.googleapis.com/maps/api/place/textsearch/json?";
         $par = "&key=AIzaSyAqYsZa6MJ97_Q-8NlafqfvIAki3W8pRQU";
-		$par .= "&sensor=true";
-		$par .= "&types=bakery|bar|cafe|casino|food|meal_delivery|meal_takeaway|restaurant";
-		
-		
+		$par .= "&sensor=false";
+		$par .= "&query=" . urlencode($search);
 		if(isset($_POST['lat']) && isset($_POST['lng'])) {
-			$_SESSION['lat'] = $_POST['lat'];
-			$_SESSION['lng'] = $_POST['lng'];
-
-        	$par.="&location=" . $_POST['lat'] . "," . $_POST['lng'];
-		    	if (isset($search) && $search != "") 
-		    	{
-		 	  	$par.="&name=" . urlencode($search);
-		    	} 
-			$preRadiusPar = $par;
-			
-			
-		}else if(isset($_POST['city'])){
-		  	$url  = "https://maps.googleapis.com/maps/api/place/textsearch/json?";
-		  	$par .= "&query=" . urlencode($search . " near " . $_POST['city']);
-		}
-		
-        if (isset($search) && $search != "") {
-        	$par.="&radius=500";
-           //no radius
-        }else{
-        	$search = "";
-			$par.="&radius=500";
-		}
-
-		$debug_log['log'] = $url . $par;
-		$db->insert("debug_log", $debug_log);
-
-
-		$results = file_get_contents("{$url}{$par}");
-				
-        $r = json_decode($results);
+		 	$par.="&location=" . $_POST['lat'] . "," . $_POST['lng'];
+			$par.="&radius=10";
+		}//lat and lng
+		$results = file_get_contents("{$url}{$par}");	
+	    $r = json_decode($results);
 			
 		$places = array();
 		$count=count($r->results);	
 		addPlaces($r->results);
-		
-		/*if($count<9 && $search===""){
-		  $par = $preRadiusPar . "&radius=500";
-		  $results = file_get_contents("{$url}{$par}");
-		  $r = json_decode($results);
-		  addPlaces($r->results);
-		  $count=$count + count($r->results);
-		}
-		
-		if($count<9 && $search===""){
-		  $par = $preRadiusPar . "&radius=5000";
-		  $results = file_get_contents("{$url}{$par}");
-		  $r = json_decode($results);		
-		  addPlaces($r->results);
-		  $count=$count + count($r->results);
-		}	*/	
-        		
 		echo json_encode($places);
 		
-    } else {
-?>
-<?php	
+}else {
 	
-		$pageid=$_POST['id'];
-		$searchMode = $_POST['searchMode'];
-        $search = $_POST['search'];
-        $foodsData = $db->selectRows("select distinct fid,name,food.type as type from food where type=$searchMode and name like '%$search%' limit 20 ");	
-				
-		$foods = array();		
-		
-        if (mysql_num_rows($foodsData) > 0) {
-            while ($food = mysql_fetch_object($foodsData)) {
-				array_push($foods,$food);
-            }        
-		} else {
-            
-				if($search!=""){
-					$newfood["fid"] = -1;
-					$newfood["type"] = $searchMode;
-					$newfood["name"] = "$search";
-					$newfood["icon"] = "add_new.png";
-					array_push($foods,$newfood);
-				}
-
-		}
-		
-		echo json_encode($foods);
-		
-    }
+        $url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?";
+        $par = "&key=AIzaSyAqYsZa6MJ97_Q-8NlafqfvIAki3W8pRQU";
+		$par .= "&sensor=false";
+		if(isset($_POST['lat']) && isset($_POST['lng'])) {
+		 	$par.="&location=" . $_POST['lat'] . "," . $_POST['lng'];
+			$par.="&radius=3";
+		}//lat and lng
+		$results = file_get_contents("{$url}{$par}");	
+	    $r = json_decode($results);
+			
+		$places = array();
+		$count=count($r->results);	
+		addPlaces($r->results);
+		echo json_encode($places);
 	
+}
 	
 	function addPlaces($r) {
 	global $db,$places;
-		/*$tw = new stdClass();
-		$tw->id = "tw_career_fair";
-		$tw->name = "TW Career Fair";
-		$tw->geometry->location->lat = "-96.8038130";
-		$tw->geometry->location->lng = "32.7964690";
-		array_unshift($r,$tw);*/
 	foreach ($r as $key => $val) {
-            $placeObj = $db->selectRow("select pid,phone,vicinity from place where gid='{$val->id}'");
+            $placeObj = $db->selectRow("select place.name as placename,place.pid,phone,vicinity,user.name as founder from place
+            left outer join role on place.pid = role.pid and role.role=1 
+            left outer join user on role.uid = user.id 
+            where gid='{$val->place_id}' ");
+            
             if ($placeObj && $placeObj['vicinity']) {
+                $name = $placeObj['placename'];
                 $pid = $placeObj['pid'];
 				$phone = $placeObj['phone'];
 				$vicinity = $placeObj['vicinity'];
+				$founder = $placeObj['founder'];
             } else {
-            	
-				if($val->vicinity){
-					$vicinity = $val->vicinity;
+                $name = $val->name;
+            	$founder = "";
+				if($val->formatted_address){
+					$vicinity = $val->formatted_address;
 				}else{
 					$vicinity = "";
 				}
 				
-                $newPlaceData['name'] = $val->name;
-                $newPlaceData['gid'] = $val->id;
+                                       $newPlaceData['name'] = $name;
+                $newPlaceData['gid'] = $val->place_id;
                 $newPlaceData['gref'] = $val->reference;
                 $newPlaceData['vicinity'] = $vicinity;
                 $newPlaceData['lat'] = $val->geometry->location->lat;
@@ -187,33 +120,59 @@
                 $pid = $db->insert('place', $newPlaceData);
 				$phone = null;
             }
-			
-		//$place = buildPlace($pid,$val->name,$val->geometry->location->lat,$val->geometry->location->lng,$phone);
 		
 			$place['pid'] = $pid;
-			$place['name'] = $val->name;
+            $place['placename'] = $name;
 			$place['lat'] = $val->geometry->location->lat;
 			$place['lng'] = $val->geometry->location->lng;
 			$place['phone'] = $phone;
 			$place['vicinity'] = $vicinity;
-			
-				$cast = array();
-				$castData = $db->selectRows("select distinct user.id as uid,
-				user.name as name,
-				user.photo as photo 
-				from user 
-				inner join role on user.id=role.uid  
-				where role.pid={$pid}");
-				while($castMember = mysql_fetch_object($castData)) {							
-					array_push($cast,$castMember);
-				}
-
-			  	$place['cast'] = $cast;		
+			$place['founder'] = $founder;
 			
 			
 		array_push($places,$place);
 		}
 
+}
+
+function createFlair($pid,$recipient_uid,$recipient_name){
+	global $user,$db;
+	$dt = new dateObj();
+	
+    $newData['user'] = $user->id;
+	$newData['place'] = $pid;
+	$newData['recipient'] = getRecipientId($pid,$recipient_uid,$recipient_name);	
+    $newData['created'] = $dt->mysqlDate();
+	
+	/*$isDuplicate = $db->selectRow("select fid from feed where user = '" . $user->id . "' and recipient = '" . $recipient . "'  and DATE(created) = CURDATE() limit 1");
+	
+	if($isDuplicate){
+		 $obj->status = 0;
+		 $obj->title = "";
+         $obj->message = "Oops! Stop clicking so fast!";
+		 echo json_encode($obj);return;	 
+	}*/
+	if($newData['recipient'] !== false){
+    	$db->insert('feed', $newData);
+	}
+}
+
+function getRecipientId($pid,$recipient_uid,$recipient_name){
+	global $db;
+	//echo "77" . $recipient_uid;
+	if($recipient_uid){
+		//echo "88";
+		$recp = $db->selectRow("select * from role where pid='{$pid}' and uid='{$recipient_uid}'");
+		if($recp == false){
+			return false;
+		}else{
+			return $recipient_uid;
+		}
+	}else{
+		$new["name"] = ucwords($recipient_name);;
+		return $db->insert("user",$new);
+	}
+	
 }
 	
 	

@@ -1,47 +1,34 @@
 <?php
+		
+		
+		
+		date_default_timezone_set('America/Los_Angeles');
 
-function addFeed($type,$target_id,$target_title,$target_photo,$cid,$ref_id){
-	global $db,$user;
-	$db->debug = true;
-	$mysqldate=new dateObj();
-	
-	$data['ref_id'] = $ref_id;
-	$data['type'] = $type;
-	$data['uid'] = $user->id;
-	$data['name'] = $user->name;
-	$data['photo'] = $user->photo;
-	$data['target_id'] = $target_id;
-	$data['target_title'] = $target_title;
-	$data['target_photo'] = $target_photo;
-	$data['cid'] = $cid;
-	$data['likes'] = 0;
-	$data['comments'] = 0;
-	$data['created'] = $mysqldate->mysqlDate();
-	
-	$db->insert("feed",$data);
-	$db->debug = false;
-}
+$dateString = 'Apr 29 2010';
+$dateTime = datetime::createfromformat('M d Y',$dateString);
 
-function getFeed($user_id){
-	global $db;
-	
-	$feed = array();
+echo $dateTime->format('d-M-Y'); ?>
 
-	$feedArr = $db->selectRows("select * from feed where uid='{$user_id}' order by created desc");
-	
-	if (mysql_num_rows($feedArr) > 0) {
-            while ($feedObj = mysql_fetch_object($feedArr)) {
-				array_push($feed,$feedObj);
+
+
+		$sql = "select typeid,feed.created,user.id as uid, user.name as name, user.photo as photo,
+        user2.id as oid, user2.name as oname, user2.photo as ophoto, 
+        make.mid, make.name as make,make.logo,
+        model.moid,model.name as model
+        
+        from feed 
+        inner join user on feed.uid = user.id 
+        left outer join user as user2 on feed.oid = user.id 
+        left outer join car on feed.cid = car.cid 
+        left outer join model on model.moid = car.moid 
+        left outer join make on model.mid = make.mid order by created desc ";
+
+		$feedArr = $db->selectRows($sql);
+    	$feed = array();		
+        if (mysql_num_rows($feedArr) > 0) {
+            while ($feedArrObj = mysql_fetch_object($feedArr)) {
+           		array_push($feed,$feedArrObj);
             }        
 		} 
-    	
-    return $feed;
-
-}
-
-function delFeed($id){
-	global $db,$user;
-	mysql_query("delete from feed where uid='{$user->id}' and ref_id='{$id}'");
-}
-
+		echo json_encode($feed);
 ?>

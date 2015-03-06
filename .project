@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>Flair</name>
+	<name>Services</name>
 	<comment></comment>
 	<projects>
+		<project>Flair---Appcelerator</project>
 	</projects>
 	<buildSpec>
+		<buildCommand>
+			<name>com.aptana.editor.php.aptanaPhpBuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
 		<buildCommand>
 			<name>com.aptana.ide.core.unifiedBuilder</name>
 			<arguments>
@@ -12,6 +18,7 @@
 		</buildCommand>
 	</buildSpec>
 	<natures>
+		<nature>com.aptana.editor.php.phpNature</nature>
 		<nature>com.aptana.projects.webnature</nature>
 	</natures>
 </projectDescription>
