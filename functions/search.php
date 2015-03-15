@@ -42,9 +42,10 @@
 		}//$placeObj['address'] == "" || isset($placeObj['address']) == false
 			$recipient_uid = $_POST["recipient_uid"];
 			$recipient_name = $_POST["recipient_name"];
+			$icon = $_POST["icon"];
 		//	echo "------->" . 
 		   if(isset($recipient_uid) || isset($recipient_name)){
-		   	  createFlair($pid,$recipient_uid,$recipient_name);
+		   	  createFlair($pid,$recipient_uid,$recipient_name,$icon);
 		   }
 		
 		   $place=buildPlace($pid,$placeObj['name'],$placeObj['lat'],$placeObj['lng'],$placeObj['phone'],$placeObj['city']);
@@ -135,12 +136,13 @@
 
 }
 
-function createFlair($pid,$recipient_uid,$recipient_name){
+function createFlair($pid,$recipient_uid,$recipient_name,$icon){
 	global $user,$db;
 	$dt = new dateObj();
 	
     $newData['user'] = $user->id;
 	$newData['place'] = $pid;
+	$newData['icon'] = $icon;
 	$newData['recipient'] = getRecipientId($pid,$recipient_uid,$recipient_name);	
     $newData['created'] = $dt->mysqlDate();
 	

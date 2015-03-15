@@ -89,7 +89,7 @@ function buildPlace($pid,$name,$lat,$lng,$phone=null,$city=null){
 				}	
 			
 				$stickersDataTempArray = $db->selectRows("select 
-				feed.fid,
+				feed.fid,feed.icon as icon,
 				feed.user as uid,
 				user.name as name,
 				user.photo as photo,
@@ -122,10 +122,6 @@ function buildPlace($pid,$name,$lat,$lng,$phone=null,$city=null){
 					$stickerDataTemp['likes'] = json_decode($stickerDataTemp['likes']);
 					array_push($stickers,$stickerDataTemp);
 				}
-				
-				
-				
-			
 				
 				return $stickers;	
 			}
